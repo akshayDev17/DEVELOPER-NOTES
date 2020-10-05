@@ -10,9 +10,9 @@
    1. [FTP](#ftp)
    2. [SFTP steps](#sftp-steps)
    3. [Disadvantages of SFTP](#disadv-sftp)
-4. [Horizontal vs Vertical Scalability](#scalability)
-   1. [Vertical Scalability](#vs)
-   2. [Horizontal Scalability](#hs)
+4. [Monolithic architecture](#monolith)
+5. [MicroService](#microservice)
+6. [JWT](#jwt)
 
 
 
@@ -187,22 +187,59 @@
 
 
 
-# Horizontal vs Vertical Scalability<a name="scalability"></a>
+# Monolithic architecture<a name="monolith"></a>
 
-## Vertical Scalability<a name="vs"></a>
+1. on *smushing* modules of a code into a single server(physically a collection of machines, this doesn't literally mean 1 machine)
+2. complexity of code(w.r.t. its modular structure) needs to be handled at both the development-time and runtime
+   1. monolithic isn't able to do this
+3. the bigger the deployment, the more challenging it is
+   1. suppose feature-to-be-added = Ads, 
+   2. the entire testing(all previous modules) have to be tested, before being deployed
+   3. since the entire application is being deployed on a server, every time an *update is made, we need to test the entire application*
+4. has an issue of scalability
+   1. on increased traffic, more instances of server would be needed
+   2. since everything is deployed on 1 server, on *creating multiple instances of a server, **even all the functionalities have to be scaled up, i.e. duplicated on each server***, because the entire server represents the entire application
+   3. lot of monetary cost incurred as a result.
 
-1. adding more resources (CPU/RAM/DISK) to your server (database or application server still remains one) on demand.
-2. most commonly used in applications and products of middle-range as well as small and middle-sized companies. 
-3. One of the most common examples is to buy an expensive hardware and use it as a Virtual Machine hypervisor (VMWare ESX).
-4. usually means upgrade of server hardware. 
-5. Some of the reasons to scale vertically includes increasing IOPS (Input / Output Operations), amplifying CPU/RAM capacity, as well as disk capacity.
-6. However, even after using virtualisation, whenever an improved performance is targeted, the risk for down-times with it is much higher than using horizontal scaling.
 
-## Horizontal scalability<a name="hs"></a>
 
-1. means that higher availability of services required, adding more processing units or physical machines to your server/database
-2. growing the number of nodes in the cluster
-3. reducing the responsibilities of each member node by spreading the key space wider and providing additional end-points for client connections. 
-4. Horizontal Scaling has been historically much more used for high level of computing and for application and services.
-5. **Although this does not alter the capacity of each individual node**, the load is decreased due to the distribution between separate server nodes.
-6. the reason organisations prefer this largely over *<u>vertical scalability</u>* is because of increasing I/O concurrency, reducing the load on existing nodes, and increasing disk capacity can be achieved with it.
+
+
+# MicroService<a name="microservice"></a>
+
+1. split up an application into smaller, min-applications
+   1. deploy each of these on their dedicated servers, and allow communication between these servers
+2. all these mini-apps would call each others REST-APIs to fetch the client's request
+3. these *<u>mini-apps = microservices</u>*
+4. risk of deployment is minimised
+   1. suppose commerce-website = shopping-catalogue app, web-view app, profile-page app
+   2. an update to the shopping-catalogue app will only be confined to it, hence only this app should be tested, since its separate from other min-apps
+5. scaling is easier
+   1. suppose traffic increases on the shopping-catalogue app
+   2. only that app needs to be scaled, i.e. only the instance of a server that hosts that particular application is needed to be duplicated.
+6. deployment flexibility - different groups can work on different mini-apps, which can be further split into teams working on each functionality of a mini-app.
+7. technology flexibility - all mini-apps can be written in different/same technology, since they would in the end communicate using their APIs 
+8. can be scaled separately
+9. deployment/architecture complexity
+   1. as an when more mini-apps are added, deployment of the complete app becomes more complex
+10. service discovery
+    1. the method in which these micro-services would *discover* each other.
+
+
+
+
+
+
+
+# Json Web Token<a name="jwt"></a>
+
+1. pronounced as "jawt"
+2. secure communication, RFC 7519 - outlines how a JWT should be structured
+3.  instead of returning a session id to each user that authenticates, it returns the user-information itself as a token, with a signature of the web-server
+   1. a json-payload with the username-password returned as a token
+   2. hence the server itself doesn't save anything
+4. whenever a client makes a request to the server, the server checks whether a valid-signed token is sent by the client
+   1. the token is nothing but the username-password sent in a secured manner
+5. the security-issue regarding this is handled by matching the signatures
+6. JWT - value tokens.
+7. can be sent using cookies, can be saved in the local-storage of the browser 
