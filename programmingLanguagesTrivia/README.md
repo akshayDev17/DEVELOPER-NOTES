@@ -70,7 +70,7 @@ The second way is if you have a friend who knows ancient Greek. When you're read
 
 
 
-## Intermediate Approach<a nam="ia"></a>
+## Intermediate Approach<a name="ia"></a>
 
 1. compile the code into an *intermediate language*
    1. translate the source code along a way to machine code, while still being portable in cross-platforms

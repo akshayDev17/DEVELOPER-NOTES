@@ -1,7 +1,7 @@
 # History
 
 1. developed in 2007 by Robert Griesemer, Rob Pike and Ken Thompson at Google but launched in 2009 as an *open-source programming language*
-2. supports environment adopting patterns alike to dynamic languages. For eg., type inference (`y := 0` is a valid declaration of a variable `y` of type `float`, here the variable `y` doesn't need to be declared before being assigned a value, that's why its called environment adopting patterns).
+2. supports environment adopting patterns alike to [dynamic languages](https://github.com/akshayDev17/DEVELOPER-NOTES/tree/master/programmingLanguagesTrivia#stdt). For eg., type inference (`y := 0` is a valid declaration of a variable `y` of type `float`, here the variable `y` doesn't need to be declared before being assigned a value, that's why its called environment adopting patterns).
 
 
 
@@ -11,11 +11,62 @@
 
 ### Why Golang?
 
-* Because Go language is an effort to combine the ease of programming of an interpreted, dynamically typed language(for instance python) with the efficiency and safety of a statically typed, compiled language(for instance C/Java). 
+* Because Go language is an effort to combine the ease of programming of an [interpreted, dynamically typed language](https://github.com/akshayDev17/DEVELOPER-NOTES/tree/master/programmingLanguagesTrivia#compiled-vs-interpreted-differences)(for instance python) with the efficiency and safety of a [statically typed, compiled language](https://github.com/akshayDev17/DEVELOPER-NOTES/tree/master/programmingLanguagesTrivia#compiled-vs-interpreted-differences)(for instance C/Java). 
 * It also aims to be modern, with support for networked and multi-core computing.
 * There are no forward declarations(declare the function , but don't define it) and no header files(unlike C/C++); everything is declared exactly once.
 * There is no explicit type-hierarchy, i.e. no top-type is present, which , however *`interface{}`* is the **universal-base** class in Golang, which is a **compile-time static type**.
   * variables of type `interface` can accept any object value, but do not reflect real run time types that an object can have in the type system, so are not top types in the first regard(with regards to the existence of a universal-base class).
+
+# How is Go compiled?
+
+3 phases of the compiler
+
+1. The scanner, which converts the source code into a list of tokens, for use by the parser.
+2. The parser, which converts the tokens into an Abstract Syntax Tree to be used by code generation.
+3. The code generation, which converts the Abstract Syntax Tree to machine code.
+
+
+
+![equation](https://latex.codecogs.com/gif.latex?%7B%5Ccolor%7BRed%7D%20%5Ctextrm%7BPlease%20read%7D%7D)[this](https://getstream.io/blog/how-a-go-program-compiles-down-to-machine-code/)
+
+
+
+*The actual GO compiler doesn't use these packages, however its semantics are very similar to this sequence of events. It does not use these packages because the compiler was once written in C and converted to Go code, so the actual Go compiler is still reminiscent of that structure.*
+
+
+
+## Scanner<a name="GO-scanner"></a>
+
+* The first step of every compiler is to break up the raw source code text into tokens, which is done by the scanner (also known as lexer). 
+* Tokens can be **keywords, strings, variable names, function names**, etc. 
+* Every valid program *word* is represented by a token. 
+* In concrete terms for Go, this might mean we have a token “package”, “main”, “func” and so forth. 
+* Each token is represented by its position, type, and raw text in Go. 
+* Go even allows us to execute the scanner ourselves in a Go program by using the **go/scanner** and **go/token** packages. 
+* That means we can inspect what our program looks like to the Go compiler after it has been scanned.
+
+
+
+## Parser<a name="GO-parser"></a>
+
+* After the source code has been scanned, it will be passed to the parser. 
+* The parser is a phase of the compiler that converts the tokens into an **Abstract Syntax Tree (AST)**. 
+* The AST is a structured representation of the source code. 
+* In the AST we will be able to see the program structure, such as functions and constant declarations. 
+* Go has again provided us with packages to parse the program and view the AST: **go/parser** and **go/ast**.
+
+
+
+## Code Generation<a name="Go-code-generation"></a>
+
+* After the imports have been resolved and the types have been checked, we are certain the **program is valid Go code** and we can start the process of converting the **AST to (*pseudo*) machine code**. 
+* The first step in this process is to convert the AST to a lower-level representation of the program, specifically into a Static Single Assignment (SSA) form. 
+* This intermediate representation is not the final machine code, but it does represent the final machine code a lot more(can be thought of as the ByteCode seen in the [intermediate approach](https://github.com/akshayDev17/DEVELOPER-NOTES/tree/master/programmingLanguagesTrivia#ia)). 
+* SSA has a set of properties that make it easier to apply optimizations, most important of which that a variable is always defined before it is used and each variable is assigned exactly once. 
+* After the initial version of the SSA has been generated, a number of **optimization passes** will be **applied**. 
+* These optimizations are applied to certain pieces of code that can be made simpler or faster for the processor to execute. 
+  * For example, dead code, such as **`if (false) { fmt.Println(“test”) }`** can be eliminated because this will never execute. 
+  * Another example of an optimization is that certain nil checks can be removed because the compiler can prove that these will never false.
 
 
 
