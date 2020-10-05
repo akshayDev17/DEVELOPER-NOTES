@@ -19,6 +19,36 @@
 
 
 
+### Features
+
+1. **Package Management:** 
+   1. Go merges modern day developer workflow of working with *Open Source projects* and includes that in the way it manages external packages. 
+   2. Support is provided directly in the tooling to get external packages and publish your own packages in a set of easy commands.
+2. **Static Typing**
+   1. compiler not just works on compiling the code successfully but also ensures on type conversions and compatibility. 
+   2. Because of this feature Go avoid all those problems which we face in dynamically typed languages.
+3. **Testing Support:** 
+   1. Go provides us the unit testing features by itself i.e., a simple mechanism to write your unit test parallel with your code because of this you can understand you code coverage by your own tests.
+   2. And that can be easily used in generating your code documentation as an example.
+4. **Platform Independent:** 
+   1. Go language is just like Java language as it support platform independency.
+   2. Due to its modular design and modularity i.e., the code is compiled and is converted into binary form which is as small as possible and hence, it requires no dependency.
+   3. Its code can be compiled in any platform or any server and application you work on.
+
+
+
+## Advantages vs Disadvantages
+
+| Advantages                                                   | Disadvantages                                                |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| garbage collection - key feature, control over memory allocation, reduced latency in most recent versions of garbage collector | no support for generics, even if there are many discussions on it |
+| validates for the interface and type embedding               | not as much object-oriented as in the conventional sense     |
+|                                                              | absence of a UI tool-kit                                     |
+
+
+
+
+
 ## Hardware optimisations
 
 1. Golang has been designed in such a way that instead of using threading it uses **`Goroutine`**, which is similar to threading but consumes very less memory.
@@ -32,3 +62,14 @@
 4. Goroutines allow you to avoid having to resort to mutex locking when sharing data structures.
 5. Goroutines are multiplexed onto a small number of OS threads, rather than a 1:1 mapping.
 6. can write massively concurrent servers withouth having to resort to evented programming.
+
+
+
+**Some popular Applications developed in Go Language**
+
+- Docker: a set of tools for deploying linux containers
+- **Openshift:** a cloud computing platform as a service by Red Hat.
+- **Kubernetes:** The future of seamlessly automated deployment processes
+- **Dropbox:** migrated some of their critical components from Python to Go.
+- **Netflix:** for two part of their server architecture.
+- **InfluxDB:** is an open-source time series database developed by InfluxData.

@@ -5,17 +5,6 @@
 
 
 
-# Compile-time vs Run-time<a name="crt"></a>
-
-1. compile-time:
-   1. instance where code  is converted to executable
-   2. error occurred due to typing mistake, if we do not follow the proper **syntax** and **semantics** of any programming language then compile time errors are thrown by the compiler. 
-   3. code is run, only after syntax-errors are rectified, 
-2. run-time:
-   1. instance where the executable is run
-
-
-
 `continue` means that further statements in the loop won't be read:
 
 1. in the case of the `for` loop, i.e.
