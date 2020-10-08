@@ -144,6 +144,61 @@ int main()
 
 
 
+```c++
+// C++ program to return the 
+// pointer from a function 
+#include <iostream> 
+using namespace std; 
+  
+// taking a function having 
+// pointer as return type 
+int* rpf(int); 
+  
+int main() 
+{ 
+  
+    int n = 745; 
+  
+    // displaying the value of n 
+    cout << n << endl; 
+  
+    // calling the function 
+    cout << *rpf(n) << endl; 
+} 
+  
+// defining function 
+int* rpf(int n1) 
+{ 
+  
+    // taking a local variable 
+    // inside the function 
+    int lv = n1 * n1; 
+  
+    // make the above 
+    // declaration as static which 
+    // result into successful 
+    // compilation 
+    // static int lv = n1 * n1; 
+  
+    // this will give warning as we 
+    // are returning the address of 
+    // the local variable 
+    return &lv; 
+} 
+```
+
+
+
+* this code gives a warning:
+  *prog.cpp: In function ‘int\* rpf(int)’:*
+  *prog.cpp:24:9: warning: address of local variable ‘lv’ returned [-Wreturn-local-addr]*
+  *int lv = n1 \* n1;*
+* compiler always make a stack for a function call. 
+* As soon as the function exits the function stack also get removed which causes the local variables of functions to go out of scope. 
+* Making it(local variable **lv**) static will resolve the problem as static variables have a property of **preserving** their **value even after** they are **out of their scope**.
+
+
+
 
 
 # Variable-names in C<a name="variables-c"></a>
