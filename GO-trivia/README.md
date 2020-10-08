@@ -3,6 +3,15 @@
 1. [History](#history)
 2. [Why golang?](#why-golang)
 3. [How is GO compiled?](#go-compilation)
+   1. [Scanner](#GO-scanner)
+   2. [Parser](#GO-parser)
+   3. [Code generation](#Go-code-generation)
+4. [Fundamentals](#go-fundamentals)
+   1. [identifiers](#go-identifiers)
+5. [Arrays in GO](#go-arrays)
+   1. [definition](#go-array-def)
+   2. [passage as function argument](#go-array-function-parameter)
+6. [Pointers](#go-pointers)
 
 
 
@@ -137,3 +146,174 @@
 - **Dropbox:** migrated some of their critical components from Python to Go.
 - **Netflix:** for two part of their server architecture.
 - **InfluxDB:** is an open-source time series database developed by InfluxData.
+
+
+
+
+
+# Fundamentals<a name="go-fundamentals"></a>
+
+
+
+# Identifiers<a name="go-identifiers"></a>
+
+can be any of the following:
+
+1. variable name
+2. function name
+3. package name
+4. package type
+5. constant
+6. statement labels
+
+Rules for defining **valid** identifiers:(otherwise compile-time error)
+
+1. must begin with letter or '_'(**cannot** begin with a number)
+2. intermediate letters may contain numbers, a-z or A-Z and '_'(apart from these, nothing else is allowed)
+3. reserved keywords(int, string etc.) **cannot be used** as identifiers
+4. no limit on the length of the name of the identifier
+
+
+
+**Pre-declared identifiers**:
+
+* constants: true, false, iota, nil(`err != nil`)
+* types: int, int8, int16, int32, int64, uint,
+  uint8, uint16, uint32, uint64, uintptr,
+  float32, float64, complex128, complex64,
+  bool, byte, rune, string, error
+* functions
+  * make
+  * delete
+  * len
+  * cap
+  * new
+  * append
+  * copy
+  * close
+  * complex
+  * real
+  * imag
+  * panic
+  * recover
+
+The identifier which is allowed to access it from another package is known as the *exported identifier*. The exported identifiers are those identifiers which obey the following conditions:
+
+- The first character of the exported identifier’s name should be in the Unicode upper case letter.
+- The identifier should be declared in the package block, or it is a variable name, or it is a method name.
+
+
+
+# Arrays in GO<a name="go-arrays"></a>
+
+### Array definition<a name="go-array-def"></a>
+
+```go
+var arrayName[30]int
+// var arrayName[length]type
+
+arr := [3][3]string{{"C#", "C", "Python"},  
+                   {"Java", "Scala", "Perl"}, 
+                    {"C++", "Go", "HTML"},} 
+
+// Creating an array whose size is determined  
+// by the number of elements present in it 
+// Using ellipsis 
+myarray:= [...]string{"GFG", "gfg", "geeks", 
+                    "GeeksforGeeks", "GEEK"} 
+
+// copy-by-reference
+myArray2 := &myarray
+// here, if myArray2 is mutated, the change is reflected in myarray
+```
+
+* arrays are mutable, but size remains the same
+* In an array, if an array does not initialized explicitly, then the **default value of this array is 0**
+* In Go language, **an array is of value type not of reference type**. 
+  * So when the array is assigned to a new variable, then the changes made in the new variable do not affect the original array.
+  * this is unlike a `numpy array` in `python`
+* can be compared using `==` , alike python 
+
+
+
+## Passage into a function<a name="go-array-function-parameter"></a>
+
+```go
+// For sized array
+func function_name(variable_name [size]type){
+// Code
+}
+
+// For unsized array
+func function_name(variable_name []type){
+// Code
+}
+```
+
+
+
+
+
+# Pointers<a name="go-pointers"></a>
+
+1. store address of some variable
+
+2. memory address stored always in hexadecimal format
+
+3. `0x` = first address location, 0 in hexadecimal, first pointer, also called null-pointer
+
+4. these aren't some normal int type variables that store a hexadecimal address value
+
+   1. ```go
+      // Golang program to demonstrate the variables 
+      // storing the hexadecimal values 
+      package main 
+        
+      import "fmt"
+        
+      func main() { 
+        
+          // storing the hexadecimal 
+          // values in variables 
+          x := 0xFF 
+          y := 0x9C 
+            
+          // Displaying the values 
+          fmt.Printf("Type of variable x is %T\n", x) 
+          fmt.Printf("Value of x in hexdecimal is %X\n", x) 
+          fmt.Printf("Value of x in decimal is %v\n", x) 
+            
+          fmt.Printf("Type of variable y is %T\n", y) 
+          fmt.Printf("Value of y in hexdecimal is %X\n", y) 
+          fmt.Printf("Value of y in decimal is %v\n", y)     
+            
+      } 
+      ```
+
+   2. output:
+
+      ```bash
+      Type of variable x is int
+      Value of x in hexdecimal is FF
+      Value of x in decimal is 255
+      Type of variable y is int
+      Value of y in hexdecimal is 9C
+      Value of y in decimal is 156
+      ```
+
+   3. although the variables `x` and `y` store a hexadecimal number that represents valid memory-address locations, these are just plain user-defined variables, and don't exactly point to any address locations.
+
+5. pointers, in addition to storing a hexadecimal address of a memory location, **also point to it**
+
+6. they provide a way to find out what is stored in that memory location(`*p`, where \* = <u>de-referencing</u> operator).
+
+
+
+
+
+
+
+# Interview Questions
+
+
+
