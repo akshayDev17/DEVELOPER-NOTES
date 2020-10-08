@@ -1,3 +1,14 @@
+# Table of Contents
+
+1. [Pointers]
+2. [Functional-scope](#c-functional-scope)
+
+
+
+
+
+
+
 ## Usual sizes of data-types
 
 1. int, pointer(any pointer, since pointer stored address, which is a 32 bit number), float - 4Bytes
@@ -144,45 +155,28 @@ int main()
 
 
 
+
+
+# Functional-scope<a name="c-functional-scope"></a>
+
 ```c++
-// C++ program to return the 
-// pointer from a function 
 #include <iostream> 
-using namespace std; 
-  
-// taking a function having 
-// pointer as return type 
+using namespace std;
 int* rpf(int); 
-  
 int main() 
 { 
-  
-    int n = 745; 
-  
-    // displaying the value of n 
-    cout << n << endl; 
-  
-    // calling the function 
-    cout << *rpf(n) << endl; 
+    int n = 745;
+    cout << n << endl;  // 745
+    cout << *rpf(n) << endl; // warning
 } 
-  
-// defining function 
 int* rpf(int n1) 
 { 
-  
-    // taking a local variable 
-    // inside the function 
     int lv = n1 * n1; 
-  
-    // make the above 
-    // declaration as static which 
-    // result into successful 
-    // compilation 
+    // make the above declaration as static which 
+    // result into successful compilation 
     // static int lv = n1 * n1; 
   
-    // this will give warning as we 
-    // are returning the address of 
-    // the local variable 
+    // this will give warning as we are returning the address of the local variable 
     return &lv; 
 } 
 ```
