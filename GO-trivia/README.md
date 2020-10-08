@@ -12,6 +12,9 @@
    1. [definition](#go-array-def)
    2. [passage as function argument](#go-array-function-parameter)
 6. [Pointers](#go-pointers)
+   1. [Double pointer]()
+   2. [Pointers as function arguments]()
+   3. [Pointers to struct](#go-struct-pointers)
 
 
 
@@ -82,7 +85,7 @@
 
 * After the imports have been resolved and the types have been checked, we are certain the **program is valid Go code** and we can start the process of converting the **AST to (*pseudo*) machine code**. 
 * The first step in this process is to convert the AST to a lower-level representation of the program, specifically into a Static Single Assignment (SSA) form. 
-* This intermediate representation is not the final machine code, but it does represent the final machine code a lot more(can be thought of as the ByteCode seen in the [intermediate approach](https://github.com/akshayDev17/DEVELOPER-NOTES/tree/master/programmingLanguagesTrivia#ia)). 
+* This intermediate representation is not the final machine code, but it does represent the final machine code a lot more(can be thought of as the ByteCode seen in the [intermediate approach](https://github.com/akshayDev17/DEVELOPER-NOTES/tree/master/programmingLanguagesTrivia#ia), although no bytecode file is generated). 
 * SSA has a set of properties that make it easier to apply optimizations, most important of which that a variable is always defined before it is used and each variable is assigned exactly once. 
 * After the initial version of the SSA has been generated, a number of **optimization passes** will be **applied**. 
 * These optimizations are applied to certain pieces of code that can be made simpler or faster for the processor to execute. 
@@ -256,58 +259,155 @@ func function_name(variable_name []type){
 
 # Pointers<a name="go-pointers"></a>
 
-1. store address of some variable
+```go
+var ptrName *int; // set to nil
 
-2. memory address stored always in hexadecimal format
-
-3. `0x` = first address location, 0 in hexadecimal, first pointer, also called null-pointer
-
-4. these aren't some normal int type variables that store a hexadecimal address value
-
-   1. ```go
-      // Golang program to demonstrate the variables 
-      // storing the hexadecimal values 
-      package main 
-        
-      import "fmt"
-        
-      func main() { 
-        
-          // storing the hexadecimal 
-          // values in variables 
-          x := 0xFF 
-          y := 0x9C 
-            
-          // Displaying the values 
-          fmt.Printf("Type of variable x is %T\n", x) 
-          fmt.Printf("Value of x in hexdecimal is %X\n", x) 
-          fmt.Printf("Value of x in decimal is %v\n", x) 
-            
-          fmt.Printf("Type of variable y is %T\n", y) 
-          fmt.Printf("Value of y in hexdecimal is %X\n", y) 
-          fmt.Printf("Value of y in decimal is %v\n", y)     
-            
-      } 
-      ```
-
-   2. output:
-
-      ```bash
-      Type of variable x is int
-      Value of x in hexdecimal is FF
-      Value of x in decimal is 255
-      Type of variable y is int
-      Value of y in hexdecimal is 9C
-      Value of y in decimal is 156
-      ```
-
-   3. although the variables `x` and `y` store a hexadecimal number that represents valid memory-address locations, these are just plain user-defined variables, and don't exactly point to any address locations.
-
-5. pointers, in addition to storing a hexadecimal address of a memory location, **also point to it**
-
-6. they provide a way to find out what is stored in that memory location(`*p`, where \* = <u>de-referencing</u> operator).
+// initialisation
+var a = 45
+var s *int = &a
+```
 
 
+
+* null pointer actual value is `nil`
+
+* default(*uninitialised*) pointer is always set to `nil`
+
+* if the datatype to which a pointer variable will be pointing to is specified, then in the future it can be only assigned to pointing the same types of variables(pointers aren't dynamic type)
+
+  * to overcome this:
+
+    ```go
+    var y = 456 // y := 456
+    var x = &y // x becomes a pointer to y , x := &y
+    ```
+
+  * here, the compiler is the one who determines the type of this pointer variable
+
+* ```go
+  var x = 200;
+  var p *int = &x
+  fmt.Println(x)// 200
+  
+  // pointer magic
+  *p = 500
+  fmt.Println(x)// 500
+  ```
+
+* if ptr1 and ptr2 point to same variable ptr1 == ptr2 is true
+
+* `cap(ptr)` and `len(ptr)` returns the **capacity** and length respectively of a pointer, both are integer values, this is **defined only for pointer to array** type pointers
+
+  ```go
+  var ptr1 [7]*int // cap(ptr1) = 7
+  var ptr2 [5]*string // cap(ptr2) = 5
+  var ptr3 [8]*float64 // cap(ptr3) = 8
+  
+  
+  ```
+
+
+
+## Double pointers in go<a name="go-double-pointers"></a>
+
+* pointer to a pointer
+
+* ```go
+  // taking a variable // of integer type 
+  var V int = 100 
+  
+  // taking a pointer of integer type  
+  var pt1 *int = &V 
+  fmt.Println(pt1) // address of V
+  
+  // taking pointer to pointer to pt1 storing the address of pt1 into pt2 
+  var pt2 **int = &pt1
+  fmt.Println(pt2) // address of pt1
+  fmt.Println(*pt2) // address of V i.e. value of pt1
+  ```
+
+
+
+
+
+## Pointers as function-argument<a name="go-func-pointer"></a>
+
+```go
+package main 
+import "fmt"
+func ptf(a *int) { 
+    *a = 748 // dereferencing, *a := 748 can also be used, but a non-int cannnot be assigned
+}
+func rptr
+func main() {   
+    var x = 100 
+    fmt.Printf("The value of x before function call is: %d\n", x) // 100
+    var pa *int = &x 
+    ptf(pa)
+    fmt.Printf("The value of x after function call is: %d\n", x) // 748  
+} 
+```
+
+
+
+* to avoid issues like [allocating functional-scopic variables onto stack](https://github.com/akshayDev17/DEVELOPER-NOTES/tree/master/c-trivia#functional-scope), GO compiler allocates variables on the heap
+
+* it then performs escape analysis to escape the variable from the local scope.
+
+  ```go
+  package main   
+  import "fmt"
+  func main() {
+      n := rpf()
+      fmt.Println("value of n is, ", n) // 0xc000098010
+      fmt.Println("Value of n is: ", *n) // successfully prints 100
+  }
+  func rpf() *int {
+      lv := 100
+      fmt.Println("value of lv is, ", lv) // 100
+  	fmt.Println("value of address of lv is, ", &lv) // 0xc000098010
+      return &lv
+  }
+  ```
+
+  ![equation](https://latex.codecogs.com/gif.latex?%7B%5Ccolor%7BRed%7D%20%5Ctextrm%7BNote%3A%7D%7D) *Golang doesn’t provide any support for the pointer arithmetic like C/C++. If performed, the compiler will throw an error as invalid operation.*
+
+
+
+
+
+```go
+package main 
+import "fmt"
+func updatearray(funarr *[5]int) { // update(funarr []int) 
+    (*funarr)[4] = 750 // funarr[4] = 750 does the same    
+} 
+func main() { 
+    arr := [5]int{78, 89, 45, 56, 14}   
+    // passing pointer to an array(by reference) to function
+    updatearray(&arr) // good practice => update(arr[:]) , usage of slice
+    fmt.Println(arr) 
+} 
+```
+
+**Note:** 
+
+* In Golang it is not recommended to use Pointer to an Array as an Argument to Function as the code become difficult to read. 
+* Also, it is not considered a good way to achieve this concept. 
+* To achieve this you can use **slice** instead of passing pointers.
+
+
+
+
+
+## GO struct pointers<a name="go-struct-pointers"></a>
+
+```go
+ptr := &structVarName
+fmt.println(ptr) // &{fieldVal1 fieldVal2 ...}
+fmt.Println(ptr.fieldName == (*ptr).fieldName) // true
+ptr.fieldNameX = newValX // modify fields
+```
 
 
 
