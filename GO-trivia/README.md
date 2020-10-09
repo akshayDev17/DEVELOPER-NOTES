@@ -15,6 +15,7 @@
    1. [Double pointer]()
    2. [Pointers as function arguments]()
    3. [Pointers to struct](#go-struct-pointers)
+7. [Interfaces](#go-interfaces)
 
 
 
@@ -259,6 +260,8 @@ func function_name(variable_name []type){
 
 # Pointers<a name="go-pointers"></a>
 
+total time : 1:26:16
+
 ```go
 var ptrName *int; // set to nil
 
@@ -408,6 +411,116 @@ fmt.println(ptr) // &{fieldVal1 fieldVal2 ...}
 fmt.Println(ptr.fieldName == (*ptr).fieldName) // true
 ptr.fieldNameX = newValX // modify fields
 ```
+
+
+
+
+
+
+
+# Interfaces<a name="go-interfaces"></a>
+
+**36:52**
+
+1. specify a set of method signatures(declaring the method name, return type, but not writing the function body is called method signature.)
+
+2. this itself is abstract, hence cannot create an instance of interface
+
+   1. in JAVA, once a class implements an interface, an instance of that class(an object of that class) can be created, thereby creating an instance of this interface
+   2. this cannot be done in GO, since there are no classes in GO, hence nothing implements an interface.
+   3. but allowed to create a variable of type `interface` and assign it to a concrete type that has the functions of the interface defined(the methods declared in the interface have been defined for this variable)
+   4. in GO, it is necessary to implement all methods declared in a 
+
+3. ```go
+   type geometry interface {
+       area() float64
+       perim() float64
+   }
+   type rect struct {
+       width, height float64
+   }
+   type circle struct {
+       radius float64
+   }
+   func (r rect) area() float64 { // interface methods
+       return r.width * r.height // implemented for rect struct
+   }
+   func (r rect) perim() float64 {
+       return 2*r.width + 2*r.height
+   }
+   func (c circle) area() float64 { // interface methods
+       return math.Pi * c.radius * c.radius // implemented for circle struct
+   }
+   func (c circle) perim() float64 {
+       return 2 * math.Pi * c.radius
+   }
+   func measure(g geometry) {
+       fmt.Println(g)
+       fmt.Println(g.area())
+       fmt.Println(g.perim())
+   }
+   func main() {
+       r := rect{width: 3, height: 4}
+       c := circle{radius: 5}
+   
+       measure(r)
+       measure(c)
+   }
+   ```
+
+4. empty interface: `interface{}`, all types implement the empty interface.
+
+5. interfaces are of 2 types - static and dynamic.
+
+   1. interface does not have a static **value**(different from type), hence in the example below, type = static(nothing implements the interface), value = dynamic
+
+   2. ```go
+      type tank interface {
+          Tarea() float64 
+          Volume() float64 
+      } 
+      func main() { 
+          var t tank // tank = interface, t - variable of type tank
+          fmt.Println("Value of the tank interface is: ", t) // <nil> this is printLN
+          fmt.Printf("Type of the tank interface is: %T ", t) // <nil> // this is printF
+          
+          y := 456
+      	fmt.Println("The value of y is ", y) // 456
+      	fmt.Printf("Its type is %T\n", y) // int
+      }
+      
+      // errorneous code:
+      func (x int) Tarea() float64 {
+      	return float64(x) / 4.0
+      }
+      ```
+
+   3. interface type = dynamic, interface value = dynamic when the variable is of a datatype that implements the interface
+
+      ```go
+      type tank interface {
+      	Tarea() float64
+      }
+      type panzer struct {
+      	radius float64
+      	height float64
+      }
+      func (p panzer) Tarea() float64 { // panzer implements the interface and defines its method
+      	return math.Pi * math.Pow(p.radius, 2) * p.height
+      }
+      func main() {
+      	p := panzer{radius: 3, height: 5}
+      	fmt.Println("The value of p Tarea is ", p.Tarea()) // execute and find value
+      	fmt.Printf("Its type is %T\n", p.Tarea()) // float64
+      }
+      ```
+
+      
+
+   4. the erroneous code returns a compile time error: *cannot define new methods for non-local type int*
+
+      1. this is because int is already a pre-defined datatype(also a keyword) in GO
+      2. for such data-types, writing additional methods in this way is wrong.
 
 
 
