@@ -521,6 +521,47 @@ ptr.fieldNameX = newValX // modify fields
 
       1. this is because int is already a pre-defined datatype(also a keyword) in GO
       2. for such data-types, writing additional methods in this way is wrong.
+      
+   5. **Type Assertions:**
+   
+      1. check dynamic type of the variable
+   
+      2. if T = concrete type(a pre-defined data-type or a struct that may or may not implement method(s) of an interface), type assertion checks whether the dynamic type of a is equal to T
+   
+         1. if successful, assertion returns the dynamic value of a
+            1. if types are equal, then the value is returned
+            2. else the default value is returned,  with another boolean variable = false(ok)
+         2. else, panics
+   
+      3. T = interface type, the given dynamic type of a is checked with T
+   
+         1. if **successful, does not** return the dynamic value of a.
+   
+      4. ```go
+         func myfun(a interface{}) {
+         	val := a.(string)
+         	fmt.Println("Value: ", val) // "GeeksfoGeeks"
+         
+         	val_1, ok := a.(int) // separate variable va_1 has to be used
+         	if !ok {   		  // since the val is of type string and cannot be type-casted into an int, the ok is a bool type
+         		fmt.Println(err, "\n", val_1) // false, 0 is printed
+         	}
+             
+             val_2, ok_2 := a.(interface{})
+         	if !ok_2 {
+         		fmt.Println("value is ", val_2, " with return ", ok_2) // this is printed
+         	} else {
+         		fmt.Println("value is ", val_2, " with return ", ok_2)
+         	}
+             x := 456
+         	val_2, ok_2 = x.(interface{}) // invalid type assertion error, program panics
+         }
+         func main() {
+         	var val interface {
+         	} = "GeeksforGeeks"
+         	myfun(val)
+         }
+         ```
 
 
 
