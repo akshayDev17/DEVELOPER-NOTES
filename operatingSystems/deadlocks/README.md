@@ -11,7 +11,11 @@
       3. [Violating preemption](#violate-preemption)
       4. [Violate circular wait](#violate-circular-wait)
    2. [Avoidance](#deadlock-avoidance)
+      1. [Banker's Algorithm](#bankers)
+      2. [Resource Allocation graph](#resource-allocation-graph)
    3. [Detection and recovery](#deadlock-dar)
+      1. [Active Approach](#ddr-active)
+      2. [Lazy Approach](#ddr-lazy)
    4. [Ignorance](#deadlock-ignorance)
 
 
@@ -318,9 +322,48 @@ at time t1 = 1 = 5, 2 = 2, 3 = 3. total resource-instances = 12. tell if the sta
 
 
 
+### Resource Allocation Graph<a name="resource-allocation-graph"></a>
+
+1. vertices = processes(circular) + resource-types(rectangular), edges = directed, resource-to-process = process has already acquired this resource, process-to-resource = process requests for this resource
+
+2. number of arrows from a process to/from a resource-type = how many resource-instances of that type does the process requests/holds  .
+
+3. number of circles in each rectangular node = total available resource-instances for that resource type.
+
+4. <img src="resalloc.jpg" width=300 />
+
+5. cyclic sub-graph in resource allocation graph = deadlock may occur if its a case of circular wait, and hold and wait, i.e. circular wait exists such that the resource-types being waited for are unavailable.
+
+6. if it is **given that only 1 instance of each resource type is present** then just a **presence of cycle in this allocation graph is sufficient** to say that **deadlock will occur**.
+
+   1. on the contrary, if a deadlock exists, the corresponding resource-allocation graph must have a cycle.
+
+    
+
+
+
+
+
 ## Deadlock detection and recovery<a name="deadlock-ddr"></a>
 
 1. Let deadlock occur, then do preemption to handle it once occurred.
+2. just as prevention had some strict restrictions due to which avoidance was resorted to as an optimal strategy of handling deadlocks, avoidance strategy itself also poses some restrictions, in the form of **finding safe sequences ** and *cycles in resource allocation graph*
+3. hence this strategy is opted for in cases where *even avoidance is to be avoided*
+4. Again, when the *deadlock frequency is even lesser* this is used.
+5. here, even though the resource-allocation might lead to a deadlock, it is  carried out regardless, and a deadlock is permitted to occur.
+   1. **active approach and lazy approach used to detect** the possibility of a deadlock
+
+
+
+### Active approach<a name="ddr-active"></a>
+
+1. check at regular intervals whether the system is in deadlock, by **checking safe sequence possibility**, and *whenever CPU utilisation falls below 40%*
+
+
+
+### Lazy Approach<a name="ddr-lazy"></a>
+
+1. only when utilisation goes below 40% do we invoke the deadlock detection algorithm.
 
 
 
