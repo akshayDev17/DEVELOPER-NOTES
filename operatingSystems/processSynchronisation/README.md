@@ -4,6 +4,10 @@
 2. [Critical Section Problem](#csp)
 3. [Using turn variable to solve CSP](#turn-CSP)
 4. [Using flag variable to solve CSP](#flag-CSP)
+5. [Peterson's solution](#peterson-csp)
+6. [Semaphores](#semaphores)
+7. [Producer consumer problem](#produce-consumer)
+   1. [Real-world applications](#producer-consumer-real-world)
 
 
 
@@ -144,3 +148,248 @@
    5. this is because of **trying to achieve progress criteria**
 
 8. hence **progress** is also **not satisfied**
+
+
+
+
+
+# Peterson's Solution<a name="peterson-csp"></a>
+
+1. use **both turn and flag**
+
+2. ```cpp
+   // turn is a global variable across processes
+   flag = {false, false};
+   turn = 0;
+   
+   // p0
+   while(1){
+       flag[0] = true;
+       turn = 1;
+       while(turn == 1 && flag[1]); // initially it was turn != 0, which means turn == 1
+       // cs
+       flag[0] = false;
+       // remainder section = rs
+   }
+   
+   // p1
+   while(1){
+       flag[1] = true;
+       turn = 0;
+       while(turn == 0 && flag[0]); // initially it was turn != 1, which means turn == 0
+       // cs
+       flag[1] = false;
+       // remainder section = rs
+   }
+   ```
+
+3. suppose P0 starts executing
+
+   1. `flag = {true, false}`, followed by `turn = 1`, it doesn't fall into the trap since `flag[1] == false` enters into its CS, exits and makes `flag = {false, false}`
+   2. now suppose the control is transferred to P1, it makes `flag = {false, true}`, followed by `turn = 0` , it doesn't fall into the trap since `flag[0] == false`, enters into its CS, exits and makes `flag = {false, false}`
+   3. while P0 was executing, suppose context was switched to P1 after `turn = 1`, then if P1 reaches the trap, it will get trapped in that while loop, and after its time quantum expiration, control will be handed over back to P0, which can safely enter into its own CS, since `turn == 0` thus avoiding the trap
+
+4. suppose context switch happens before P1 enters into its trap statement, and control is given back to P0
+
+   1. now we would be entering into the trap statement of P0, with `flag = {true, true}` and `turn = 0`
+   2. thus the trap is avoided since `turn == 0`
+
+5. we can clearly see that
+
+   1. **`turn`** *makes sure* that execution of CS is in a *mutually exclusive* fashion, as `flag[0]` and `flag[1]` both can be true, but `turn` will only *have 1 value*.
+   2. **`flag`** on the other hand is used to **break the cyclic nature(strict alternation) of turn-variable solution**, thus **ensuring progress**, i.e. if suppose P0 never wants to enter its CS again, after it has entered once, P1 can still enter, since it is not bound by any cyclic pattern of execution, contrary to the turn variable solution.
+
+6. this solution **also suffices** the optional criteria of **bounded wait**
+
+   1. at-least one of the processes will enter into its CS, and if suppose a chain of events = {busy-wait of P1, CS of P0} occurs, this will eventually break off, after P0 exits its CS
+   2. hence P1 has to remain in a waiting state only till the time P0 completes its CS
+   3. hence no infinite wait is mandated.
+
+
+
+
+
+
+
+# Semaphores<a name="semaphores"></a>
+
+1. can be used to order the execution among processes, apart from solving the CS problem
+
+2. can be used for resource management
+
+3. peterson's solution was valid to only 2 processes, this can be generalised to n processes in the system.
+
+4. ```cpp
+   s = 1;
+   wait(s){
+       while(s <= 0);
+       s = s-1;
+   }
+   signal(s){
+       s += 1;
+   }
+   // Pi
+   do{
+       wait(s);
+       // cs
+       signal(s);
+       // remainder section
+   } while(1);
+   ```
+
+5. `wait`  serves as a trap statement
+
+6. the first process that accesses the CS makes s = 0 due to `wait(s)`
+
+   1. hence if the control is midway preempted to any other process in the system, that process will waste time in busy wait, due to the trap statement inside `wait(s)` and eventually the control is returned back to the original process.
+   2. thus **mutual exclusion is ensured**.
+   3. now the process will exit its CS, execute `signal(s)` thus enabling any other process to enter into its CS.
+   4. now, any process, be it this one, or any other in the pool, can easily enter its own CS.
+   5. hence **progress is satisfied**
+
+7. *bounded wait is ensured* when a process finishes its CS
+
+8. the above solution **doesn't either guarantee ordering of processes nor does it perform any resource management** .
+
+9. ordering might be important since a particular order of processes may be necessary to facilitate a desired outcome
+
+   1. for instance P0 - fetch radius, P1 - fetch surface area, P2 - fetch cost, given cost/area should naturally be executed in the order P0--->P1--->P2
+
+   2. ```cpp
+      s0 = 0, s1 = 0;
+      
+      // P0 code
+      signal(s1);
+      
+      wait(s1);
+      // P1 code
+      signal(s0);
+      
+      wait(s0);
+      // P2 code
+      ```
+
+   3. it can be clearly seen that 
+
+      1. the control will strictly go to P0 first
+      2. if at any point the control is preempted from P0, and given to either of P1/P2, that process will waste time in busy wait, after which control will be given back to P0
+
+   4. after P0 has accessed its CS, `s1 = 1` and thus P1 can be allowed to enter its CS
+
+   5. notice that P2 is barred to do so, since `s0 == 0` thus making it trap in a busy wait, if the control is ever transferred to it
+
+   6. only after P1 is completed its CS is P2 allowed to do so.
+
+   7. 1 thing to note is that **number of semaphores used = n-1, n : total processes**; individual variables can be replaced with an array.
+
+10. suppose there are N instances of a resource(non-shareable)
+
+    1. then instead of s=1 , we can initialise s=N, with the remainder of the code for each process as:
+
+       ```cpp
+       p_i(){
+          while(1){
+              wait(s);
+              // cs
+              signal(s);
+              // rs
+          }
+       }
+       ```
+
+    2. hence the first N processes will be assigned the non-shareable resource after which other processes would not be allowed to enter, thus preventing them from any resource allocation.
+
+11. general representation: `signal(s) = V(s)`, `wait(s) = P(s)`
+
+12. **deadlock in semaphores**
+
+    1. ```cpp
+       x=1,y=1;
+       p(){
+           wait(x);
+           wait(y);
+           // cs
+           signal(y);
+           signal(x);
+       }
+       
+       q(){
+           wait(y);
+           wait(x);
+           // cs
+           signal(x);
+           signal(y);
+       }
+       ```
+
+    2. in this case, after `wait(x)` in `p()`, preempting to `q()` performing `wait(y)` causes deadlock, as now both processes enter into busy waiting thus never reaching CS.
+
+
+
+
+
+
+
+# Producer Consumer Problem<a name="producer-consumer"></a>
+
+1. 2 processes producer and consumer
+
+   1. producer produces instances of a non-resource
+   2. consumer consumes instance of that resource
+
+2. overflow conditions
+
+   1. no empty slot available for producer to keep a produced resource into
+   2. no full slot available for consumer to consume a resource from
+
+3. producer and consumer should not try to access the storage at the same time
+
+   1. in this case the storage is a non-shareable unit, its update/delete should happen atomically, and at different time-instances
+
+4. ```python
+   # semaphore, empty-slot, full-slot
+   s, e, f = 1, n, 0
+   
+   def producer:
+       produce()
+       wait(e)
+       wait(s)    
+       append() # critical-section
+       signal(s)
+       signal(f)
+   
+   def consumer:
+       wait(f)
+       wait(s)
+       take() # critical section
+       signal(e)
+       signal(s)
+       consume() 
+       
+   def wait(param):
+       while param <= 0:
+           continue
+       param -= 1
+       return param
+   
+   def signal(param):
+       return param+1
+   ```
+
+5. `append()` and `take()` actually access the non-shareable resource
+
+6. `e` takes care of it there are any empty slots, `f` checks if there are any full slots, `s` ensures mutual exclusion.
+
+7. even if producer produces an item, but the control is context-switched to the consumer, the take operation ensures that the last produced entity is removed, thus ensuring that no memory problems of the race-condition occur.
+
+8. `signal(s)` is written before the signal of the other 2 variables, since after CS, the other process should be immediately allowed to enter into its own CS.
+
+9. overflow--->`wait(e)` , underflow---->`wait(f)`
+
+
+
+
+
+
+
+## Real-world applications<a name="producer-consumer-real-world"></a>
