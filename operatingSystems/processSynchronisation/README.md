@@ -8,6 +8,9 @@
 6. [Semaphores](#semaphores)
 7. [Producer consumer problem](#produce-consumer)
    1. [Real-world applications](#producer-consumer-real-world)
+8. [Reader-Writer Problem](#reader-writer)
+   1. [Real World application](#rwa-reader-writer)
+9. [Dining Philosopher's Problem](#dpp)
 
 
 
@@ -390,6 +393,105 @@
 
 
 
-
-
 ## Real-world applications<a name="producer-consumer-real-world"></a>
+
+
+
+
+
+
+
+# Reader-Writer Problem<a name="reader-writer"></a>
+
+1. given a piece of text, we can either read it, or write something to it
+
+   1. reader process - reads the text
+   2. writer process - writes some text, and essentially reads the text as well, to find the location to which to write new content
+   3. text - CS(non-shareable resource), but truly speaking, for various instances of reader-processes, its not non-shareable, as multiple readers can read at the same time, i.e. occupy the shared resource(text) at the same time, but multiple writers cannot write on the resource, hence
+      1. R-R = shareable
+      2. R-W and W-W = non-shareable
+
+2. ```python
+   mutex, w, readCount = 1, 1, 0
+   
+   def reader():
+       wait(mutex)
+       readerCount += 1
+       if readerCount == 1:
+           # this was the first reader process to enter the pool
+           wait(w) # wait, there might be a writer already present
+       # if more than 1 reader processes are there, it means that the
+       # first ever reader process that had entered the pool ensured that
+       # no new writer processes would be allowed
+       signal(mutex)
+       read()
+       wait(mutex)
+       readcount--
+       if readCount == 0:
+           # last reader process exits
+           signal(w) # enable any writer process to come, since there are no more reader processes  in the pool
+       signal(mutex)
+       
+   def writer():
+       wait(w)
+       write()
+       signal(w)
+   ```
+
+3. `readCount` is obviously used to track how many reader processes exist in the pool
+
+4. `read()` occurs after `signal(mutex)` which only goes to show that once a reader process is about to enter its CS, it allows entry of other reader processes into their CS as well
+
+   1. if the first reader process wasn't able to enter, i.e. `wait(w) == bus_wait()` , other new reader processes also won't be allowed, **because of `wait(mutex)`**
+
+
+
+
+
+## Real-world applications<a name="rwa-reader-writer"></a>
+
+
+
+
+
+
+
+# Dining Philosopher's Problem<a name="dpp"></a>
+
+* consider 5 philosophers on a circular dining table , each having a chopstick on their right-hand side
+
+* in the centre of the table is a bowl of rice, which can be eaten only with 2 chopsticks
+
+* when a philosopher thinks, they don't interact with their neighbours
+
+* <img src="dining.png" />
+
+* from time to time, each philosopher will try to pick the 2 neighbouring chopsticks and try to eat the rice.
+
+* it may seem at a first glance that the bowl is a non-shareable resource, **but it isn't so, as P1 and P3 can easily have the rice at the same time**.
+
+* obviously each unique chopstick is non-shareable
+
+* when a philosopher is finished having the rice, they can yield both of their held chopsticks
+
+* ```python
+  chopsticks = [1 for _ in range(5)]
+  def philosopher(id):
+      thinking()
+      wait(chopsticks[i])
+      wait(chopsticks[(i+1)%5])
+      eating()
+      wait(chopsticks[i])
+      wait(chopsticks[(i+1)%5])
+  ```
+
+* mutual exclusion is guaranteed due to the semaphore structure
+
+* **deadlock can occur**
+
+  * since a process could be context switched at any instance, consider a scenario where for each philosopher process, we context switch after `wait(chopsticks[i])`
+  * in this case, each philosopher will acquire 1 chopstick and wait for the other, this will cause infinite wait
+  * remember in a deadlock question, where Si was the demand of resources of each process-i, and there were total n processes in the pool and total instances of the resource available was m,
+    in that case, a condition of ![equation](https://latex.codecogs.com/gif.latex?%7B%5Ccolor%7BRed%7D%20%5Csum%5Climits_%7Bi%3D1%7D%5En%20S_i%20%3C%20%5Ctextrm%7Bn%20&plus;%20m%7D%7D) a deadlock-free allocation, which is not satisfied here, since in this case the LHS=RHS.
+
+* 
