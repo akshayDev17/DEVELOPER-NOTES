@@ -7,10 +7,12 @@
 5. [Peterson's solution](#peterson-csp)
 6. [Semaphores](#semaphores)
 7. [Producer consumer problem](#produce-consumer)
-   1. [Real-world applications](#producer-consumer-real-world)
 8. [Reader-Writer Problem](#reader-writer)
-   1. [Real World application](#rwa-reader-writer)
 9. [Dining Philosopher's Problem](#dpp)
+   1. [Limit number of philosophers on the table at a time](#limit-philosophers)
+   2. [allow 6 chopsticks instead of 5](#allow-more-chopsticks)
+   3. [allow philosophers to hold either both or none of the required chopsticks](#allow-both-or-none)
+   4. [Order of chopstick picking](#order-chopstick-picking)
 
 
 
@@ -335,21 +337,23 @@
 
 # Producer Consumer Problem<a name="producer-consumer"></a>
 
-1. 2 processes producer and consumer
+1. **classical IPC(inter-process communication) problem**
+
+2. 2 processes producer and consumer
 
    1. producer produces instances of a non-resource
    2. consumer consumes instance of that resource
 
-2. overflow conditions
+3. overflow conditions
 
    1. no empty slot available for producer to keep a produced resource into
    2. no full slot available for consumer to consume a resource from
 
-3. producer and consumer should not try to access the storage at the same time
+4. producer and consumer should not try to access the storage at the same time
 
    1. in this case the storage is a non-shareable unit, its update/delete should happen atomically, and at different time-instances
 
-4. ```python
+5. ```python
    # semaphore, empty-slot, full-slot
    s, e, f = 1, n, 0
    
@@ -379,21 +383,15 @@
        return param+1
    ```
 
-5. `append()` and `take()` actually access the non-shareable resource
+6. `append()` and `take()` actually access the non-shareable resource
 
-6. `e` takes care of it there are any empty slots, `f` checks if there are any full slots, `s` ensures mutual exclusion.
+7. `e` takes care of it there are any empty slots, `f` checks if there are any full slots, `s` ensures mutual exclusion.
 
-7. even if producer produces an item, but the control is context-switched to the consumer, the take operation ensures that the last produced entity is removed, thus ensuring that no memory problems of the race-condition occur.
+8. even if producer produces an item, but the control is context-switched to the consumer, the take operation ensures that the last produced entity is removed, thus ensuring that no memory problems of the race-condition occur.
 
-8. `signal(s)` is written before the signal of the other 2 variables, since after CS, the other process should be immediately allowed to enter into its own CS.
+9. `signal(s)` is written before the signal of the other 2 variables, since after CS, the other process should be immediately allowed to enter into its own CS.
 
-9. overflow--->`wait(e)` , underflow---->`wait(f)`
-
-
-
-
-
-## Real-world applications<a name="producer-consumer-real-world"></a>
+10. overflow--->`wait(e)` , underflow---->`wait(f)`
 
 
 
@@ -403,7 +401,9 @@
 
 # Reader-Writer Problem<a name="reader-writer"></a>
 
-1. given a piece of text, we can either read it, or write something to it
+1. **classical IPC(inter-process communication) problem**
+
+2. given a piece of text, we can either read it, or write something to it
 
    1. reader process - reads the text
    2. writer process - writes some text, and essentially reads the text as well, to find the location to which to write new content
@@ -411,7 +411,7 @@
       1. R-R = shareable
       2. R-W and W-W = non-shareable
 
-2. ```python
+3. ```python
    mutex, w, readCount = 1, 1, 0
    
    def reader():
@@ -438,17 +438,11 @@
        signal(w)
    ```
 
-3. `readCount` is obviously used to track how many reader processes exist in the pool
+4. `readCount` is obviously used to track how many reader processes exist in the pool
 
-4. `read()` occurs after `signal(mutex)` which only goes to show that once a reader process is about to enter its CS, it allows entry of other reader processes into their CS as well
+5. `read()` occurs after `signal(mutex)` which only goes to show that once a reader process is about to enter its CS, it allows entry of other reader processes into their CS as well
 
    1. if the first reader process wasn't able to enter, i.e. `wait(w) == bus_wait()` , other new reader processes also won't be allowed, **because of `wait(mutex)`**
-
-
-
-
-
-## Real-world applications<a name="rwa-reader-writer"></a>
 
 
 
@@ -457,6 +451,8 @@
 
 
 # Dining Philosopher's Problem<a name="dpp"></a>
+
+* **classical IPC(inter-process communication) problem**
 
 * consider 5 philosophers on a circular dining table , each having a chopstick on their right-hand side
 
@@ -493,5 +489,61 @@
   * in this case, each philosopher will acquire 1 chopstick and wait for the other, this will cause infinite wait
   * remember in a deadlock question, where Si was the demand of resources of each process-i, and there were total n processes in the pool and total instances of the resource available was m,
     in that case, a condition of ![equation](https://latex.codecogs.com/gif.latex?%7B%5Ccolor%7BRed%7D%20%5Csum%5Climits_%7Bi%3D1%7D%5En%20S_i%20%3C%20%5Ctextrm%7Bn%20&plus;%20m%7D%7D) a deadlock-free allocation, which is not satisfied here, since in this case the LHS=RHS.
+    
 
-* 
+* one way to go about this is
+
+  ```python
+  wait(s)
+  wait(chopstick[i])
+  wait(chopstick[(i+1)%5])
+  eat()
+  signal(s)
+  ```
+
+  * the semaphore `s` would ensure that the first ever process that arrives gets both of its chopsticks, and it will release only after finishing its meal
+  * this however reduces the throughput, as in although 5 chopsticks are available, among 5 people, only 1 of those philosopher can have the rice at a time.
+
+
+
+
+
+
+
+## Another Solution-Limit number of philosophers on the table at a time<a name="limit-philosophers"></a>
+
+* **allow at-most 4 philosophers to sit at the table** , i.e. a semaphore s can be constructed, with s = 4, thus with each entry of a new philosopher process, s will start to decrease, and at the time of entry of the last(fifth) philosopher process, wait(s) will cause it to be trapped in busy wait
+* this basically enforces the condition ![equation](https://latex.codecogs.com/gif.latex?%5Csum%5Climits_%7Bi%3D1%7D%5E%7B%7B%5Ccolor%7BRed%7D%20%5Ctextbf%7B4%7D%7D%7DS_i%20%3D%208%20%3C%204&plus;5%20%3D%209)
+* this condition basically frees the environment from the **hold and wait condition for deadlock**
+
+
+
+
+
+## Another solution - allow 6 chopsticks instead of 5<a name="allow-more-chopsticks"></a>
+
+* thus enforcing the condition ![equation](https://latex.codecogs.com/gif.latex?%5Csum%5Climits_%7Bi%3D1%7D%5E%7B5%7DS_i%20%3D%2010%20%3C%205%28n%29&plus;6%28m%29%20%3D%2011)
+
+
+
+## Another solution - allow philosophers to hold either both or none of the required chopsticks<a name="allow-both-or-none"></a>
+
+* at-least 1 process will receive 2 chopsticks, thus breaking the **hold and wait barrier** which will lead to a chain of all processes being running properly
+* this may although cause **starvation of individual philosopher processes** , given there may be multiple instances of philosopher-1, philosopher-2, etc. processes
+
+
+
+
+
+## another solution - Order of chopstick picking<a name="order-chopstick-picking"></a>
+
+1. reverse the **chopstick picking order** for at-least 1 process
+2. for instance:
+   1. P0 - 0,1
+      P1 - 1,2
+      P2 - 2,3
+      P3 - 3,4
+      **P4 - 0,4 (instead of 4,0)**
+   2. this **breaks the deadlock-ed cyclic picking**,  hence P4 will keep the chopstick 4 free, thus enabling P3 to pick it thus complete, and then free up chopsticks-3,4
+3. in this solution, we are technically **not allowing exactly 1 philosopher at a time to sit at the table**
+4. hence to **avoid deadlock**, we need to **face the clash head-on**
