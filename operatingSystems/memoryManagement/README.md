@@ -5,14 +5,15 @@ keywords - [external fragmentation](#ef), [internal fragmentation](#if)
 # Table of Contents
 
 1. [Introduction](#mem-manage-intro)
-2. [Contiguous memory allocation](#contiguous-malloc)
+2. [Storage Structure](#storstruct)
+3. [Contiguous memory allocation](#contiguous-malloc)
    1. [Fixed-size partitioning](#fixed-size-partitioning)
       1. [First-fit in fixed-sized partitioning](#fffsp)
    2. [Variable-size partitioning](#variable-size-partitioning)
       1. [First-Fit](#first-fit-vsp)
       2. [Best-fit in variable-sized partitioning](#bfvsp)
-3. [Non-Contiguous memory allocation](#non-contiguous-malloc)
-4. 
+4. [Non-Contiguous memory allocation](#non-contiguous-malloc)
+5. 
 
 
 
@@ -33,6 +34,24 @@ keywords - [external fragmentation](#ef), [internal fragmentation](#if)
    1. since usually the **instructions** of a program are **executed in a sequential manner**, the program that resides in the secondary memory(disk memory) is usually brought into the main memory(RAM), since the access-time of RAM(micro-seconds) is much less than that of secondary memory(milli-seconds)
    2. this pre-fetching of following instructions into the main-memory = locality of reference
 5. main-memory data can be brought into the cache, as a way of decreasing the access-time even further
+
+
+
+
+
+
+
+# Storage Structure<a name="storstruct"></a>
+
+1. <img src="storageStructure.jpg" />
+2. registers stores data in bits, smallest devices
+3. cache bigger than registers, but access time a bit higher than that for registers
+4. main-memory - RAM
+5. all non-volatile devices shown above - *secondary memory*
+6. as we go downwards, the cost per bit increases
+7. since CPU only communicates directly with main memory, contents are first loaded from secondary memory to main-memory and then further CPU-computation is carried out.
+
+
 
 
 
