@@ -2,7 +2,7 @@
 
 1. [How are vectors implemented](#vectors-implementation)
 2. [Sort()](#cpp-sort)
-3. 
+3. [Abstract classes and interfaces](#abstract-classes-interfaces)
 
 
 
@@ -27,3 +27,42 @@
 
 The **std::sort()** function which is present in C++ STL is a hybrid sorting algorithm provides average and worst case time complexity of **O(nlogn)**. The sorting algorithm which it uses is called Introsort.
 **Introsort** is combination of both quicksort and heapsort, It begins with quicksort and switch to heapsort if recursion depth exceeds a level based on the number of elements being sorted.
+
+
+
+
+
+# Abstract classes and interfaces<a name="abstract-classes-interfaces"></a>
+
+```c++
+// Base class
+class Shape {
+   public:
+      // pure virtual function providing interface framework.
+      virtual int getArea() = 0;
+      void setWidth(int w) {
+         width = w;
+      }
+   
+      void setHeight(int h) {
+         height = h;
+      }
+   
+   protected:
+      int width;
+      int height;
+};
+ 
+// Derived classes
+class Rectangle: public Shape {
+   public:
+      int getArea() { 
+         return (width * height); 
+      }
+};
+```
+
+
+
+1. the line `virtual <datatype> functionName() = 0;` declares that this method can be abstracted by the inheriting class(official syntax, the actual method can also be of a void return type, still we have to declare it in this way).
+2. 
