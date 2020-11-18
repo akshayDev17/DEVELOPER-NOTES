@@ -4,31 +4,59 @@
 
 2. [Goals of an OS](#os-goals)
 
-3. [Important terms regarding OS](#important-terms)
+   1. [Mechanism](#mechanism)
+   2. [Policy](#policy)
 
-4. [Interrupts](#interrupts)
+3. [Structure of an OS](#os-structure)
 
-5. [I/O structure](#iostruct)
+   1. [Monolithic structure](#monolith)
+   2. [Layered structure](#layered)
+   3. [Microkernel](#microkernel)
+   4. [Modules](#modules)
+
+4. [Important terms regarding OS](#important-terms)
+
+5. [Interrupts](#interrupts)
+
+6. [I/O structure](#iostruct)
 
    1. [I/O operation](#i/o-operation)
 
-6. [Multi-programming](#os-multiprogramming)
+7. [Multi-programming](#os-multiprogramming)
 
-7. [Time sharing operating system/multi-tasking](#os-time-sharing)
+8. [Time sharing operating system/multi-tasking](#os-time-sharing)
 
-8. [Multi-processing](#os-multiprocessing)
+9. [Multi-processing](#os-multiprocessing)
 
    1. [Symmetric multi-processing](#symmetric-multiprocessing)
    2. [Asymmetric multi-processing](#asymmetric-multiprocessing)
    3. [Graceful Degradation](#graceful-degradation)
 
-9. [System calls](#syscall)
+10. [System calls](#syscall)
 
    1. [User mode](#user-mode)
    2. [Kernel Mode](#kernel-mode)
    3. [Types](#syscalls-types)
 
-   
+11. [System Programs](#system-programs)
+
+12. [System Boot](#sysboot)
+
+13. cdaxc
+
+14. dc
+
+15. dcdac
+
+16. dasc
+
+17. 3. 
+
+     
+
+     
+
+     
 
 
 
@@ -68,6 +96,92 @@ A modern general-purpose computer-system:
    3. although linux is efficient, generally, more widespread is the usage of MacOS/windows , since these are more user-friendly .
 2. secondary goal
    1. efficiency
+   2. designer-oriented goals
+   3. easy to design and implement, operate, maintain, flexible, reliable, error-free
+
+
+
+## Mechanism<a name="mechanism"></a>
+
+1. determine how to achieve a goal.
+2. **important principle** - always better to **separate mechanism from policies**
+   1. this means that change in policy should not affect the mechanism, or rather the mechanism should be *flexible enough to accommodate a change in the policy*
+   2. take the example of driving a car
+      1. policy - speed limit is 40kmph, mechanism - engine+wheels+etc. that causes the car to move.
+      2. instead, think of the mechanism be composed of components such that they guarantee that the speed is exactly 40kmph, and now if the policy is changed to speed-limit=30kmph, then the mechanism has to be changed, since it was tailor made to meet the requirements of the policy, and wasn't flexible w.r.t. policy in the first place.
+3. consider resource allocation to a process
+   1. mechanism - the algorithm of resource allocation itself
+      policy - whether to allocate the resource to the requesting process or not
+      hence in this case, if policy returns true, i.e. do allocate the resource, then mechanism takes control and allocates the resource to this requesting process
+
+
+
+
+
+
+
+## Policy<a name="policy"></a>
+
+1. determine the goal itself
+
+
+
+
+
+# Structure of an OS<a name="os-structure"></a>
+
+
+
+## Monolithic structure<a name="monolith"></a>
+
+1. <img src="monolith.png" width=400/>
+2. clearly see that OS and kernel are not the same here
+3. bottom-most layer - hardware
+4. too many implementations packed into the kernel, makes its implementation and maintenance difficult
+
+
+
+
+
+## Layered Structure<a name="layered"></a>
+
+1. <img src="layered.png" />
+2. easy to implement and debug, every layer has different functionalities
+3. if 1 layer has a problem, only need to handle/debug that layer
+4. designing is tough, hierarchy of layers is very important.
+5. the communication time between layers is long, if there are many layers present, i.e. if the outermost layer of a user-program requests some hardware resource for an I/O , the request(**syscall**) has to go till the last layer.
+6. hardware layer is protected from the user-programs.
+
+
+
+
+
+## Microkernel<a name="microkernel"></a>
+
+1. <img src="micorkernel.jpg" />
+2. as we can see, user-mode(system programs) processes large functionalities, while kernel mode(privileged) has small but highly important(*core*) functionalities
+3. kernel mode sits between the user-mode and hardware, and it will decide whether to allocate any resource.
+4. another function of micro-kernel - communication between client program and different system programs(device drivers, file server, process server, virtual memory), - message passing 
+   1. hence the client program will be ran in user mode, and to access any of the functionalities like device drivers, it can stay in the user mode
+5. performance decrease due to huge overhead in system function - too many message passing between client programs and other system programs in this structure
+
+
+
+
+
+
+
+## Modules<a name="modules"></a>
+
+1. <img src="modules.png" />
+2. best methodology for OS design
+3. OOP , modular kernel
+4. all functionalities present in the form of modules, loaded to the kernel either at boot-time or run-time, hence functionalities are *dynamically loaded* as per need.
+5. each of these has a defined protected interface, more flexible than a layered structure however, since direct communication between modules can occur
+
+
+
+
 
 
 
@@ -304,3 +418,32 @@ Case : transfer contents of a file from source file to destination file
       3. send/receive messages
       4. transfer status information
       5. attach/detach remote devices
+
+
+
+
+
+
+
+# System Programs<a name="system-programs"></a>
+
+1. look at this [diagram](#os-need)
+2. provide environment convenient for development and execution
+3. some may be simple interfaces to system calls, others may be more  complex
+4. Types
+   1. File management - create, delete, copy, rename, print, dump, list contents of files
+   2. status information - date, time, amount of disk space(free, occupied, total), number of users, logging, debugging information etc.
+   3. file modification -  deals with modifying the inner contents of  a file, contrary to file-management, that is responsible for creation/deletion and outer contents of a file
+   4. *programming language support* - compiler, assemblers, debuggers, interpreters
+   5. program-loading an execution - absolute/relocatable/overlay loaders, linkage editors
+   6. communication - create virtual connection among processes, allow users to send messages to one another's screens, browse webpages, send emails, log in remotely or to transfer files from one machine to another
+
+
+
+
+
+# System Boot<a name="sysboot"></a>
+
+1. kernel to be loaded at boot up, starting the system = booting
+2. bootstrap program knows where the OS is, and how to load into memory.
+3. bootstrap loader/program in ROM/EPROM.

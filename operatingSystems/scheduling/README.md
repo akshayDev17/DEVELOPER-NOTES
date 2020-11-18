@@ -30,6 +30,16 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 ## Pre-emptive vs Non pre-emptive scheduling<a name="pre-emptive_scheduling"></a>
 
 1. Non pre-emptive

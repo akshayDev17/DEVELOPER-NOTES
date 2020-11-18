@@ -2,6 +2,17 @@
 
 
 
+
+
+1. threads = basic unit of execution, within a process.
+   1. a process can have 1-many threads.
+
+
+
+
+
+
+
 * In general each *thread* has its own registers (including its own program counter), its own stack pointer, and its own stack. 
 * **Everything else is shared** between the threads sharing a process.
 * In particular a *process* is generally considered to consist of a set of threads sharing an address space, heap, static data, and code segments, and file descriptors.
