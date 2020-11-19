@@ -6,6 +6,7 @@
 4. [Process Creation](#process-creation)
 5. [Process Termination](#process-termination)
 6. [Inter-process Communication](#ipc)
+   1. [Shared Memory systems](#shared-memory-system)
 
 
 
@@ -112,3 +113,28 @@
    3. modularity - communication of modules with one another.
    4. convenience
 4. IPC comms = shared memory(shared region of memory between cooperating processes, process read and write data to shared region) + message passing(comms by messages exchanged between cooperating processes).
+
+
+
+
+
+## Shared Memory systems<a name="shared-memory-system"></a>
+
+1. <img src="sharedMemory.jpg" />
+2. process A will write its message(to be communicated to process B) into the shared memory region, and process B will in-turn read from the same.
+3. this region usually resides in the address space of the **process creating this segment**.
+   1. in the above case, Process A creates the shared segment.
+4. other processes that wish to communicate using this shared-segment must attach it to their address space.
+   1. here B has to attach(or add simply) the shared segment created by A, to its own address space.
+5. normally the **OS prevents** one process from accessing memory of another process.
+   1. if processes need to communicate in this shared memory manner, at-least 2 processes need to agree to remove this restriction.
+6. the [producer-consumer problem](../processSynchronisation/README.md/#producer-consumer) is an example where IPC between the producer and consumer processes happens via the shared memory, i.e. the array.
+   1. 2 kinds of buffer(for the shared buffer between producer and consumer)
+      1. unbounded buffer
+         1. no practical limit on the size of buffer
+         2. for instance, in the producer-consumer problem, the producer may keep on producing many new items.
+         3. consumer has to wait only if the buffer is empty.
+      2. bounded buffer
+         1. consumer has to wait only if the buffer is empty.
+         2. producer has to wait if buffer is full.
+         3. a practical limit on the size of buffer exists.
