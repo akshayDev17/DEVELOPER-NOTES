@@ -7,6 +7,12 @@
 5. [Process Termination](#process-termination)
 6. [Inter-process Communication](#ipc)
    1. [Shared Memory systems](#shared-memory-system)
+   2. [Message Passing systems](#mps)
+      1. [Direct comms](#direct-comms)
+      2. [Indirect comms](#indirect-comms)
+      3. [Sync Comms](#sync-comms)
+      4. [Async Comms](#async-comms)
+      5. [Buffering](#buffering)
 
 
 
@@ -138,3 +144,194 @@
          1. consumer has to wait only if the buffer is empty.
          2. producer has to wait if buffer is full.
          3. a practical limit on the size of buffer exists.
+
+
+
+
+
+
+
+## Message Passing systems<a name="mps"></a>
+
+1. <img src="mps.jpg" />
+
+2. particularly useful in a distributed environment, where a shared address space cannot exist since the communicating processes may reside on different systems, and these systems are connected via network.
+
+   1. M - individual address spaces of the processes
+
+3. `send(message)` and `receive(message)` - 2 functionalities offered by such systems. [MPI Library Doc](https://www.rookiehpc.com/mpi/docs/index.php)
+
+4. message communicated can be **fixed**(straightforward implementation, makes the task of programming, i.e. usage of such a MPI system more difficult, for instance if a shorter message is to be communicated, unnecessary padding will be required, and if a longer message is to be communicated, it has to be broken down into pieces of this fixed size, and then comes the troubles of distributed computing w.r.t. such broken down messages)/**variable**(comple implementation, makes the task of programming, i.e. usage of such a MPI system *simpler*) **in size**.
+
+5. message passing between process occurs on a *communication link*, <u>logical implementation</u> of this link:
+
+   1. direct/indirect comms
+   2. sync/async comms
+   3. automatic/explicit buffering.
+
+6. ```cpp
+   // method signature for send in MPI 2.0 c++
+   int MPI_Send(const void* buffer,
+                int count,
+                MPI_Datatype datatype,
+                int recipient,
+                int tag,
+                MPI_Comm communicator);
+   
+   // method signature for receive in MPI 2.0 c++
+   int MPI_Recv(void* buffer,
+                int count,
+                MPI_Datatype datatype,
+                int sender,
+                int tag,
+                MPI_Comm communicator,
+                MPI_Status* status);
+   ```
+
+
+
+
+
+### Direct Comms<a name="direct-comms"></a>
+
+1. communicating processes must have a way of referring to each other
+
+2. processes that wants to communicate must **explicitly mention** the **name of** the **sender and recipient**
+
+3. as we can see in the above method signature for [MPI_Send()](https://www.rookiehpc.com/mpi/docs/mpi_send.php) the rank of the recipient-process has to be explicitly mentioned, hence making this comms **direct**.
+
+4. as we can see in the above method signature for [MPI_Recv()](https://www.rookiehpc.com/mpi/docs/mpi_recv.php) the rank of the sender-process has to be explicitly mentioned, hence making this comms **direct**.
+
+5. the logical link is automatically established between every pair of processes that want to communicate, and between any 2 processes, **exactly 1 link exists**.
+
+6. **symmetry in addressing** - both sender and receiver have to mention the name of the process they are trying to  communicate with.
+
+7. a **variant** of direct comms also exist, wherein the **sender** has to **explicitly mention** the **receiver** process, but **no need** for the receiver **to mention** the name of **the sender**. 
+   `send(P, message)`, where `P` = name of receiver process
+   `recv(id, message)`, where `id` = a variable which can be set to any value, depending upon whom this particular process is trying to communicate.
+
+   When **`MPI_ANY_SOURCE`** is used as a value for the argument `sender` in the above `MPI_Recv()` call , the receiver no longer has to mention the name(**id**) of the sender process.
+   this variant employs **asymmetry in addressing** .
+
+8. for direct comms, if the way in which the identity of a process is changed, then to remain consistent,  an examination of all process definitions needs to happen, so as to record any identification(id changes) changes, if any.
+
+   1. if suppose a sender sends a message `send(pid=1)` and the process with `pid=1` suddenly changes its id to 13, thus this means that in the communicator group, its id has to be renamed to `pid=13`, and the send function has to then be invoked in the apt manner.
+
+
+
+
+
+### Indirect Comms<a name="indirect-comms"></a>
+
+1. messages are sent-to/received-from *mailboxes*|*ports*.
+2. mailbox - abstract object into which messages can be placed by processes, and be extracted by some other processes, each mailbox has a unique id.
+3. 2 processes can communicate, only if they have a **shared mailbox**.
+   `send(A, message), recv(A, message)`, where `A` = mailbox id.
+4. link between processes 
+   1. exists only if they have a shared mailbox.
+   2. multiple links for a pair, each corresponding to the different mailbox that they share with one another.
+   3. a single link may be associated with more than 2 processes.
+5. scenario - P1 sends a message to A, and P2 and P3 both execute `recv(A)`, to decide which process receives this message
+   1. allow a link to be associated to **at-most 2 processes**, similar to direct comms.
+   2. allow at-most 1 process at a time to **execute `recv()`** .
+   3. allow **system** to **select arbitrarily** which process will **receive** the message, 
+      it(**system**) may also define an algorithm for selecting which process will receive the message. The system itself may identify the receiver to the sender.
+6. a **mailbox** may be **owned** wither **by** a **process or** the **OS**.
+   1. if its owned by a process, it will vanish when this process terminates.
+   2. owning a mailbox means that this process will be receiving all the messages intended for it from different senders inside this mailbox.
+   3. for an OS-owned mailbox, OS will take care of their creation/deletion.
+
+
+
+
+
+### Synchronisation<a name="sync-comms"></a>
+
+1. the calls `send` and `recv` may be blocking(synchronous) or non-blocking(async)
+
+2. Sending process is blocked(after `send` no further line of code executed until receive is completed.) until the message is received either by the receiver (direct comms) or mailbox 
+
+   ```cpp
+   int MPI_Send(const void* buffer,
+                int count,
+                MPI_Datatype datatype,
+                int recipient,
+                int tag,
+                MPI_Comm communicator);
+   ```
+
+   This is the signature for the blocking [MPI_Send()](https://www.rookiehpc.com/mpi/docs/mpi_send.php)
+
+3. Blocking receive blocks the process(receiver) until a message is received, i.e. doesn't execute further lines of code unless message is received into the message buffer.
+
+   ```cpp
+   // method signature for blocking receive in MPI 2.0 c++
+   int MPI_Recv(void* buffer,
+                int count,
+                MPI_Datatype datatype,
+                int sender,
+                int tag,
+                MPI_Comm communicator,
+                MPI_Status* status);
+   ```
+
+
+
+
+
+### Async Comms<a name="async-comms"></a>
+
+1. the sender process sends the message and resumes operation
+
+   ```cpp
+   int MPI_Isend(const void* buffer,
+                 int count,
+                 MPI_Datatype datatype,
+                 int recipient,
+                 int tag,
+                 MPI_Comm communicator,
+                 MPI_Request* request);
+   ```
+
+   The above is the method signature for the non-blocking [`MPI_Isend()`](https://www.rookiehpc.com/mpi/docs/mpi_isend.php) call.
+
+2. The receiver retrieves either a valid message or a null.
+
+   ```cpp
+   int MPI_Irecv(void* buffer,
+                 int count,
+                 MPI_Datatype datatype,
+                 int sender,
+                 int tag,
+                 MPI_Comm communicator,
+                 MPI_Request* request);
+   ```
+
+   [`MPI_irecv`](https://www.rookiehpc.com/mpi/docs/mpi_irecv.php)
+
+
+
+
+
+### Buffering<a name="buffering"></a>
+
+1. messages exchanged between processes reside in a **temporary queue**.
+2. 0 capacity buffer
+   1. the size of queue = 0, i.e. the link can;t have any messages waiting in it, sender must block(if not, the sender might send a new message, and it may so happen that the first message is not yet received by apt receiver, ) until the recipient receives the message.
+3. bounded capacity buffer
+   1. queue has finite length, thus at-most n messages can reside in it.
+   2. if its not full, a process can place its message in the queue and can send more(**no blocking required**, till it becomes full.
+   3. after its full, sender must block until space is made available in the queue.
+4. **un**bounded capacity buffer
+   1. length of the queue logically infinite, any number of messages can be accommodated in it, hence the sender never has to block.
+
+
+
+
+
+# Sockets<a name="sockets"></a>
+
+1. mainly used for client-server based systems.
+
+
+
