@@ -6,7 +6,7 @@
 4. [Using flag variable to solve CSP](#flag-CSP)
 5. [Peterson's solution](#peterson-csp)
 6. [Semaphores](#semaphores)
-7. [Producer consumer problem](#produce-consumer)
+7. [Producer consumer problem](#producer-consumer)
 8. [Reader-Writer Problem](#reader-writer)
 9. [Dining Philosopher's Problem](#dpp)
    1. [Limit number of philosophers on the table at a time](#limit-philosophers)
@@ -392,6 +392,11 @@
 9. `signal(s)` is written before the signal of the other 2 variables, since after CS, the other process should be immediately allowed to enter into its own CS.
 
 10. overflow--->`wait(e)` , underflow---->`wait(f)`
+
+11. **a real-world example**
+
+    1. compiler produces assembly code, consumed by the assembler.
+    2. assembler in turn produce object modules, consumed by the loader.
 
 
 
