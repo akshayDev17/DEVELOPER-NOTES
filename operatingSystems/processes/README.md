@@ -13,6 +13,8 @@
       3. [Sync Comms](#sync-comms)
       4. [Async Comms](#async-comms)
       5. [Buffering](#buffering)
+7. [Sockets](#sockets)
+8. [Remote Procedure Calls](#rpc)
 
 
 
@@ -332,6 +334,60 @@
 # Sockets<a name="sockets"></a>
 
 1. mainly used for client-server based systems.
+2. is an endpoint for comms, 2 processes communicating employ a pair of sockets, one for each process.
+3. socket = IP-address+portNumber
+4. server waits for an incoming request, by **listening** to a *speicified port* 
+5. once a request is received, server accepts the connection from the client socket to complete the connection
+6. servers implementing specific services(such as telnet, ftp, http) listen to well-known ports
+   1. telnet = 23
+   2. ftp = 21
+   3. http = 80
+7. all ports below 1024 well-known, used to implement standard services.
 
 
+
+### Comms using sockets
+
+1. <img src="sockets.jpg" />
+
+2. the client port is some arbitrary number greater than 1024(this assignment done by the host computer).
+
+   1. will be used by the server, so as to know whom to respond to, and at what port.
+
+3. the packets travelling between the hosts are delivered to the apt process based on the destination port number.
+
+4. if suppose another process in the same client computer(146.86.5.20) wants to communicate to the server
+
+   1. then it should open a socket connection at a port number *different than 1625*.
+
+   2. correlate this with the fact that when we open a jupyter-notebook, the first port is 8888, and if we open up another jupyter-notebook, it prints a message
+
+      ```bash
+      The port 8888 is already in use, trying another port.
+      ```
+
+      and by itselfs assigns the port 8889, if this is not in use already.
+
+
+
+
+
+
+
+# Remote Procedure Calls<a name="rpc"></a>
+
+1. processes residing on different systems, such that these systems are connected over a network, communicate with each other using this protocol, without having to understand the details of this network.
+2. only a message based communication scheme can be employed(this is IPC, and shared memory comms cannot exist) to provide the remote service.
+3. messages as part of RPC are well-structured, not just packets of data.
+4. each message is addressed to an RPC daemon(imagine this as a server side process waiting for a client request) listening to a port in the remote system, and each contains an ID of the function(a serivce requested by 1 process from the other process) to execute and the parameteres to pass to that function.
+5. the function is then executed as requested, and its output is sent back to the requester in a separate message.
+6. RPCs allow a client to invoke a procedure on a remote host(the other process, residing on the other system) as it would invoke a procedure locally
+   1. client stub is used by the RPC system to hide the details(hence the requesting process doesn't need to know the details of the comms).
+   2. a separate stub exists for each separate remote procedure.
+7. when client invokes(like calling a function) a remote procedure(procedure in another system, hence *remote*), the RPC system calls the apt stub, passing it the params provided to the remote procedure.
+   1. this stub locates the port on the server(thus locating the service to be used by the client) and marshals the paramters.
+   2. parameter marshalling involves packaging the params into a form that can be transmitted over a network. 
+   3. the stub then transfers the message to the server using message-passing.
+   4. a similar stub on the server side receives this message, and invokes a procedure on the server
+   5. if necessary, return values are passed back to the client using the same technique.
 
