@@ -391,3 +391,24 @@
    4. a similar stub on the server side receives this message, and invokes a procedure on the server
    5. if necessary, return values are passed back to the client using the same technique.
 
+
+
+
+
+## Issues in RPC<a name="rpc-issues"></a>
+
+1. difference in data representation on the client and server machines
+   1. representation of 32 bit integers(4 bytes): some systems - big endian(high memory address to store most significant *byte*), others - little endian(least significant byte at high memory address)
+   2. to **resolve this**, machine independent system of representation - for example XDR(external data representation)
+      1. client side - parameter marshalling is converting the machine dependent data into XDR before they(parameters of the remote function to be invoked at the server side, by the client request) are sent out to the server.
+      2. server side - XDR data is un-marshalled into local system's machine dependent representation(representation understood by the server machine)
+2. Due to **common network errors**, RPCs can fail, be duplicated and executed more than once.
+   1. such errors occur for a local procedure call only under extreme circumstances.
+   2. ***to resolve this***: the **OS** can **ensure** that messages are acted on exactly once, **rather than at-most once**.
+      1. the client side will keep on sending the same message to the server, until it gets a respond, or the max-allowed requests is hit
+      2. the server, if active and well-functioning, should in principle respond back once, after which it will check if the same message is being received over-and-over by the client.
+      3. if the same message is received, it will be ignored.
+      4. most local procedure calls have this exactly once functionality.
+      5. hence a protocol of acknowledgement has to be employed , wherein the client first sends a request to server, the server, if it receives the request, processes(RPC) and sends an acknowledgement to the client, implying that it received the request in good fashion.
+      6. when the client receives this acknowledgement, it stops its repeated-sending-of-messages.
+3. 
