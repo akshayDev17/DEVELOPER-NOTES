@@ -13,6 +13,8 @@
 6. [Round-robbin algorithm](#rr-alg)
    1. [Advantages](#rr-adv)
    2. [Disadvantages](#rr-disad)
+7. [Multi-level queue scheduling](#mlqs)
+8. [Multi-level feedback queue scheduling](#mlfqs)
 
 
 
@@ -327,3 +329,37 @@ Starvation - when processes with low priority/high burst time/lower order of pre
   * too short - **time wasted in rapid context switches**
   * too long - **becomes FCFS**
 * no idea of priority - hence not to be used if priority-based scheduling is of importance.
+
+
+
+
+
+
+
+# Multi-level queue scheduling<a name="mlqs"></a>
+
+1. processes are classified into different groups.
+   1. **interactive/foreground** processes - direct interaction with the user, thus need to be quick.
+   2. **background/batch** processes - since not in direct interaction with user, can be comparatively slower.
+   3. these 2 have different response time requirements(obviously :laughing: ) , thus have different scheduling needs.
+   4. foreground processes may have priority over bg processes.
+2. this type of scheduling partitions the ready queue into several separate queues.
+3. now processes are assigned to these partitioned-ready queues based on some property, like memory size, process priority, process type.
+4. each queue has its own scheduling algorithm.
+   1. for instance, separate queues may be used for fg and bg processes, where fg queue = RR(since we need to maximize response time), bg queue = FCFS(since response doesn't matter, but no process should be starved) .
+5. in addition to scheduling within each queue, *scheduling amongst these queues* should also exist
+   1. commonly implemented as a [fixed-priority preemptive scheduling](#priority-scheduling).
+   2. for example FG queue absolute priority over BG queue.
+6. <img src="mlqs.png" />
+   1. each of the above is  a queue.
+   2. a lower priority queue may not be able to execute, unless an until all the processes in the upper queues are executed(i.e. emptied)
+   3. if, w.r.t. a lower queue, suppose all upper queues were empty, such that a process in this queue was currently occupying the CPU, and now if any higher priority process arrives, the CPU will be preempted from this and be given to this newly arrived high priority-process. the lower queue process resumes its execution after this newly arrived process finishes its own execution.
+
+
+
+
+
+
+
+# Multi-level feedback queue scheduling<a name="mlfqs"></a>
+

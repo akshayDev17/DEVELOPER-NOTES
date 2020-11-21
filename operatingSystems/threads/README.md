@@ -218,9 +218,34 @@
 
 # Threading Issues<a name="threading-issues"></a>
 
+
+
+## `fork()` and `exec()` in multi-threading<a name="fork-exec-multithreading-issues"></a>
+
 1. the semantics of `fork()` and `exec()` syscalls change in multi-threaded environment.
    1. if a thread of a process calls `fork()` is the entire process duplicated, resulting in duplication of all threads, or is this new process a single-threaded one, thus replicating only this particular thread?
    2. some UNIX systems have **both** `fork()` versions
       1. duplication of all threads
       2. duplication of the `fork()` caller thread.
    3. if a thread of a process invoked the `exec()` syscall, the program specified in the `exec()` as a parameter will replace the current process entirely, **including all its current threads**.
+2. if `exec()` is called **immediately after `fork()`** , in such a case duplicating all threads is unnecessary, since this process is eventually replaced by the program(new process) which is passed in to the `exec()` call as a parameter.
+   1. duplicating the `fork()` invoking thread is enough.
+3. if `exec()` is not called after `fork()`(by a thread), then the separate process should duplicate all its threads.
+
+
+
+
+
+## Thread Cancellation<a name="thread-cancellation"></a>
+
+1. termination of a thread before its completion.
+   1. if multiple threads are searching through a database, and if one of them finds the result, other threads are cancelled.
+   2. when the &cross; button on the browser is pressed, while a web-page is loading, then all threads loading the page are cancelled.
+2. a to-be-cancelled thread is called **target thread**.
+3. <u>**async cancellation**</u> = 1 thread immediately terminates the target thread.
+4. *<u>deferred cancellation</u>* = target thread periodically checks whether it should terminate, allowing it to terminate itself in an *orderly fashion*.
+5. a thread being **cancelled** when its in the middle of updating some data shared between multiple other threads.
+6. the OS will reclaim **system resources** from a cancelled thread, but not all other resource-types
+   1. hence cancelling a thread in an async fashion may not free a necessary system-wide resource.
+   2. in deferred cancellation however, the target thread checks a flag, when its ready to be cancelled, thus allowing to check safety at cancellation instance.
+   3. hence when a target thread is holding some resource, or is amidst updating some shared data with other threads, its flag remains unchecked, thus ensuring that it won't be cancelled, thus preventing any issues that might result if it was otherwise cancelled.
