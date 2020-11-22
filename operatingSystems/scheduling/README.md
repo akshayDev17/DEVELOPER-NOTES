@@ -363,3 +363,23 @@ Starvation - when processes with low priority/high burst time/lower order of pre
 
 # Multi-level feedback queue scheduling<a name="mlfqs"></a>
 
+1. allows a process to move between queues.
+2. this is done to separate processes having varied CPU burst times.
+   1. high CPU-burst time processes would be moved to a lower priority queue
+      1. this is done so as to give a chance of execution to the lower priority processes, which may incidentally have a lesser CPU-burst time than this initially-high-priority process. 
+3. hence this makes I/O bound and interactive(FG) processes in higher-priority queues
+4. a process that waits too long in a lower priority queue may be moved to a higher priority queue - **ageing**, and is done to prevent starvation
+5. <img src="mlfqs_1.png" />
+6. above queues are listed from highest priority(quantum=8) to lowest priority(FCFS)
+7. the multi-level queue scheduling rules will be followed here as well.
+8. if a highest priority process completes its execution in 8ms, its removed from the queue, if not, its moved into the back of quantum=16 queue.
+   1. if still not, then at the back of FCFS.
+   2. the processes in quantum=16 will be allowed to execute only after the queue of quantum=8 becomes empty.
+   3. this automatically shifts the CPU bound processes into the later queues, if suppose they had initially arrived as a higher priority process.
+   4. here, ageing exists, but isn't shown.
+9. parameters of MLFQS
+   1. number of queues
+   2. scheduling algorithm for each queue
+   3. method used to determine upgrading a process to a higher priority queue
+   4. method used to determine demote a process to a lower priority queue
+   5. method used to determine which queue a process will enter when that process needs service(meaning to which exactly lower/higher priority queue should the process be transferred to, since there may obviously be more than 1 lower/higher priority queues available).
