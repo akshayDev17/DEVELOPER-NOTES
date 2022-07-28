@@ -2,20 +2,21 @@
 
 1. [History](#history)
 2. [Why golang?](#why-golang)
+3. [GO - Modules and Packages](#modules_n_package)
 3. [How is GO compiled?](#go-compilation)
    1. [Scanner](#GO-scanner)
    2. [Parser](#GO-parser)
    3. [Code generation](#Go-code-generation)
-4. [Fundamentals](#go-fundamentals)
+5. [Fundamentals](#go-fundamentals)
    1. [identifiers](#go-identifiers)
-5. [Arrays in GO](#go-arrays)
+6. [Arrays in GO](#go-arrays)
    1. [definition](#go-array-def)
    2. [passage as function argument](#go-array-function-parameter)
-6. [Pointers](#go-pointers)
+7. [Pointers](#go-pointers)
    1. [Double pointer]()
    2. [Pointers as function arguments]()
    3. [Pointers to struct](#go-struct-pointers)
-7. [Interfaces](#go-interfaces)
+8. [Interfaces](#go-interfaces)
 
 
 
@@ -40,7 +41,8 @@
 * There is no explicit type-hierarchy, i.e. no top-type is present, which , however *`interface{}`* is the **universal-base** class in Golang, which is a **compile-time static type**.
   * variables of type `interface` can accept any object value, but do not reflect real run time types that an object can have in the type system, so are not top types in the first regard(with regards to the existence of a universal-base class).
 
-
+# GO - modules and packages<a name="modules_n_package"></a>
+- Declare a main package. In Go, code executed as an application must be in a main package. [from documentation-tutorial](https://go.dev/doc/tutorial/call-module-code)
 
 # How is Go compiled?<a name="go-compilation"></a>
 
