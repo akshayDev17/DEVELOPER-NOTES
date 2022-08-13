@@ -29,4 +29,30 @@
 2. Use of a new Target?
 3. Use of a new Build Scheme?
 **Note on Simulators**: provide quick turnaround times, but not the performance of an actual target device.
-4. 
+4. Project->run,Build,Debug. <img src="images/attachDebugger.png" />
+5. [Stop build, continue build after errors](https://developer.apple.com/documentation/xcode/building-and-running-an-app)
+6. [add source files to a target](https://developer.apple.com/documentation/xcode/configuring-a-new-target-in-your-project)
+7. [When can *Implicit Dependency* detection fail?(configure dependency between targets)](https://developer.apple.com/documentation/xcode/configuring-a-new-target-in-your-project)
+8. **What's the usecase of a target-less build scheme?**
+    1. Autocreate schemes option creates such scheme, **ANSWER STILL NOT FOUND**.
+9. ***Correction to the title***, schemes are built, schemes are part of a project, schemes could point to one or more targets.
+    1.  targets could be app,framework,app extension or UI testing.
+10. Task serialization for dependency handling during build - Xcode builds a private framework before it builds the app that links against that framework.
+11. [Build order - manual, dependency order, find implicity dependencies](https://developer.apple.com/documentation/xcode/customizing-the-build-schemes-for-a-project)
+12. Background Fetch - async run your app to keep it updated to the latest state.
+    1. for instance a news app will be run in background after the user has switched away from it, rather than waiting for app launch as the latter will take a few seconds to contact the server. 
+    2. this background run is managed by iOS for proper battery utilization.
+
+
+# Quick Tips
+1. Right click on a part of a code and select Quick Help to open up the declaration for that class/function/element.
+2. Command-click on an specific view in the preview mode to access structured editing , and in turn the SwiftUI inspector.
+    1. Use this to customize that particular View.
+    2. [List of SwiftuI Views](https://developer.apple.com/documentation/widgetkit/swiftui-views)
+3. Command-Click on the line where the View is created also gives the option of opening the Inspector.
+
+# App Extensions
+1. [Documentation](https://developer.apple.com/app-extensions/)
+
+# Tutorial Links
+1. [SwiftUI Tutorial - Apple Developer Documentation](https://developer.apple.com/tutorials/swiftui/creating-and-combining-views)
