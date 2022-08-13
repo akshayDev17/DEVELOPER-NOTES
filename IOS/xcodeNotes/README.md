@@ -13,3 +13,20 @@
         - `Can it be changed on the next build?`
 
 - User Interface = SwiftUI if you want to an interactive preview of your app-code.
+
+- [Cocoa Template extra configurations](https://developer.apple.com/documentation/xcode/managing-files-and-folders-in-your-xcode-project)
+- **What is a group in XCode Project?**
+
+- Group with Folder does appear if you see its path in terminal, group without folder doesn't appear as a disk.
+        - the components(files) belonging to a group without folder will appear as files in the same directory as that where the group-without-folder was added to.
+        - Groups without folders are used mainly to organize resources(source files etc. )  inside xcode , which is rather not required on disk.
+        - [**Important**](https://developer.apple.com/documentation/xcode/managing-files-and-folders-in-your-xcode-project) Source control == version control.
+        - Remove reference - removes them from Xcode, not from disk.
+- [Why mutliple projects for your app are better than a single giant one?](https://developer.apple.com/documentation/xcode/managing-multiple-projects-and-their-dependencies)
+
+# XCode - Build a project
+1. [What is a target?](https://developer.apple.com/documentation/xcode/building-and-running-an-app)
+2. Use of a new Target?
+3. Use of a new Build Scheme?
+**Note on Simulators**: provide quick turnaround times, but not the performance of an actual target device.
+4. 
