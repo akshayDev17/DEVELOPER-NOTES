@@ -51,6 +51,15 @@
     2. [List of SwiftuI Views](https://developer.apple.com/documentation/widgetkit/swiftui-views)
 3. Command-Click on the line where the View is created also gives the option of opening the Inspector.
 
+# Views
+1. What is a protocol datatype?
+2. What are: @frozen, @propertyWrapper associated with a State(struct)?
+3. Please visit [State and Data flow](https://developer.apple.com/documentation/swiftui/state-and-data-flow)        
+    1. What is a source of truth in the context of state and app data storage?
+
+# DocList
+1. [MapKit](https://developer.apple.com/documentation/mapkit/)
+
 # App Extensions
 1. [Documentation](https://developer.apple.com/app-extensions/)
 
