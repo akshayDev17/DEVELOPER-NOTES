@@ -53,6 +53,19 @@
 
 # Views
 1. What is a protocol datatype?
+2. [body: a computed property in the View protocol](https://developer.apple.com/documentation/swiftui/view/body-swift.property).
+    1. ```Swift
+        struct MyView: View {
+            var body: some View {
+                Text("Hello, World!")
+            }
+        }
+
+        /* 2nd way */
+        struct MyView_2: View{
+            var body = Text("Hello World")
+        }
+        ```
 2. What are: @frozen, @propertyWrapper associated with a State(struct)?
 3. Please visit [State and Data flow](https://developer.apple.com/documentation/swiftui/state-and-data-flow)        
     1. What is a source of truth in the context of state and app data storage?

@@ -82,7 +82,7 @@ print(implicityWrapping.$x, ", public projected value =", implicityWrapping.$y)
 implicityWrapping.$y = !(implicityWrapping.$y)
 print("public projected value =", implicityWrapping.$y, "\n\n")
 
-implicityWrapping.$x = false
+// implicityWrapping.$x = false
 
 print("For explicitly wrapped, private x =", explicityWrapping.x, ", projected value =" , explicityWrapping.getPrivateProjectedValue())
 print("For explicitly wrapped, public x =", explicityWrapping.y, ", projected value =" , explicityWrapping.getPublicProjectedValue(), "\n")
