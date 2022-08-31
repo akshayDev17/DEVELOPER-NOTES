@@ -66,9 +66,12 @@
             var body = Text("Hello World")
         }
         ```
+    2. This style of returning a `some Protocol{}` is called returning an [opaque type](../learnSwift/README.MD#opaque_types).
+    3. `body` actually belongs to the `Self.Body` type which is an [`associatedtype`](../learnSwift/README.MD#generics) of the Protocol `View`.
 2. What are: @frozen, @propertyWrapper associated with a State(struct)?
 3. Please visit [State and Data flow](https://developer.apple.com/documentation/swiftui/state-and-data-flow)        
     1. What is a source of truth in the context of state and app data storage?
+4. Keep [this](https://developer.apple.com/forums/thread/652669) in mind while using View as a property of a structure.
 
 # DocList
 1. [MapKit](https://developer.apple.com/documentation/mapkit/)
