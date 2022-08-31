@@ -18,3 +18,9 @@ print(rect.center)
 
 var x = 2
 print("\(type(of: rect))")
+
+func giveSampleView() -> some View{
+    Text("Hello")
+}
+let view_sample = giveSampleView()
+print(type(of: view_sample))
