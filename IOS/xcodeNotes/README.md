@@ -73,6 +73,16 @@
     1. What is a source of truth in the context of state and app data storage?
 4. Keep [this](https://developer.apple.com/forums/thread/652669) in mind while using View as a property of a structure.
 
+# Protocols
+## Hashable
+1. From the doc(hence the Landmark Structure is Hashable).
+    > For structs whose stored properties are all Hashable, and for enum types that have all-Hashable associated values, the compiler is able to provide an implementation of hash(into:) automatically.
+2. 
+## [Codable](https://developer.apple.com/documentation/swift/codable)
+1. means Encodable and Decodable
+2. On adopting the Hashable protocol, that structure will be treated as a key(encoded), and when accessed this encoded key will be decoded to the original structure, hence the structure adopting the Hashable protocol should *be both, Encodable* and *Decodable*. Refer to the Landmark structure.
+3.  
+
 # DocList
 1. [MapKit](https://developer.apple.com/documentation/mapkit/)
 
