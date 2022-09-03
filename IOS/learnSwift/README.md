@@ -1,3 +1,76 @@
+# Basics
+1. constants: variables whose value once set cannot be changed: `let x = "Hello World"`
+2. Tuples - group values belonging to different data types. **READ TUPLES FROM THE DOC.**
+2. Optionals - `var x: String?` , meaning there is a variable `x` of type `String`, whose *value* can either be `String` *or* be `nil`.
+    1. nil is the default value until this variable is set to some another value.(`type = Optional<Int>`)
+    2. `let var123 = nil` IS NOT ALLOWED. nil needs context(`Optional<SomeDefinedType>`)
+    3. Read about Forced Unwrapping.(runtime error if nil is unwrapped)
+    4. Checkout the problem with Optional Binding within a while loop(condition body).
+    5. Implicitly Unwrapped optionals Usecase: on declaration might have a value, but once value is set will never become nil.
+        To declare these use `var x: String!`
+        1. No need of force unwrapping(`x!`) it, `print(x)` will do the trick.
+        2. Data Type will still remain `Optional<Type>`, and the value could still be nil. 
+            > When you use an implicitly unwrapped optional value, Swift first tries to use it as an ordinary optional value; if it can’t be used as an optional, Swift force-unwraps the value. 
+        3. 
+3. Type safe - meaning once a variable is given a value of a particular data type, cannot be assigned a value of another data type.
+    1. Compile error is thrown if type safety is violated.
+4. can define multiple related variables of the same type on a single line
+    1. for multiple variables in a single line but with different types, variables with similar types can be subgrouped, but all subgroups will have to explicitly provide the data type.
+5. for variables declared with assignment value but no datatype, the documentation says that:
+    > If you provide an initial value for a constant or variable at the point that it’s defined, Swift can almost always infer the type(called *Type Inference*) to be used for that constant or variable, as described in Type Safety and Type Inference.
+6. [Naming Constants and Variables](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html)
+7. If a variable name is the same as a reserved keyword in Swift, as per Swift doc:
+    > surround the keyword with backticks (`) when using it as a name. \
+    > **However, avoid using keywords as names unless you have absolutely no choice**.
+8. Refer [HERE](dataTypes.swift) to actual syntax of print function.
+    1. printing via String interpolation(`"\(varName)"`)(print variables in the same line along with text)
+9. Multiline comments can be nested, i.e. 
+    ```swift
+    /* 
+    This is parent comment
+        /*
+        This is child comment
+        */
+    */
+    ```
+10. Integer Bounds: 
+    ```swift
+    let minVal = UInt8.min, maxVal = UInt8.max
+    ```
+    1. Read about bits size of Float and Double, also their precision bit-length.
+11. **Numeric Literals**: decimal system `let x=17`, binary system: `let x = 0b10111`(0b), octal: `let x=0o01572`(0o), hexadecimal: `let x=0x1a4568e`, exponentials: `let x=1.25e-2`(means 1.25*10^(-2) = 0.0125), `let x = 1.9e4`(19000)
+    1. since e is itself in a hex notation, `p` is used, but it means `2^(p)`, rather than 10 as the base.
+    2. Refer Documentation:
+        > Both integers and floats can be padded with extra zeros and can contain underscores to help with readability. \
+    3. 
+12. Guess what'll this do:?
+    ```swift
+    let twoThousand: UInt16 = 2_000
+    let one: UInt8 = 1
+    let twoThousandAndOne_1 = twoThousand + one
+    let twoThousandAndOne_2 = twoThousand + UInt16(one)
+    ```
+    1. two variables of different UInt/Int types as well cannot be added \
+        also, an Int and a Double cannot be added: 
+        ```swift
+        let n1 = 3, n2 = 2.234
+        let n3 = n1 + n2  /* compile error */
+        let n4 = 1+0.4232 /* allowed since both of these are literals, and n4 will have Double as its type. */
+        ```
+    2. Hence, if you want to *typecast* a *small Int to a large Int*, use `Int64(varName)`\
+        As per the Doc: 
+        > The rules for combining numeric constants and variables are different from the rules for numeric literals. The literal value 3 can be added directly to the literal value 0.14159, because number literals don’t have an explicit type in and of themselves. Their type is inferred only at the point that they’re evaluated by the compiler.
+13. Type Aliases(`typealias AudioSample = UInt16`)
+14. Booleans
+    ```swift
+    let i=1
+    if i{
+        // compile error, since unlike cpp, this doesn't redirect to if i != 0
+    }
+    ```
+    You will always need a boolean for the conditional expression part of if-else statements.
+15. 
+
 # Syntax Rules
 1. no semicolon
 2. [Collection Types: Sets, Arrays, Dictionaries](https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html)
