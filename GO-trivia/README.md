@@ -17,6 +17,7 @@
    2. [Pointers as function arguments]()
    3. [Pointers to struct](#go-struct-pointers)
 8. [Interfaces](#go-interfaces)
+9. [Composition](#Composition)
 
 
 
@@ -565,7 +566,38 @@ ptr.fieldNameX = newValX // modify fields
          }
          ```
 
-
+# Composition<a name="Composition"></a>
+1. Go doesn't has inheritance because - no concept of classes
+2. Example: [main.go](#main.go)
+3. now an object of type `Car` will have `Name` and `Type` as its properties, and will work with all methods defined for a `Vehicle`.
+4. this is known as fields of an embedded struct(`Vehicle`) being ***promoted*** to the level of the embedding struct(`Car`).(rather than `c.Vehicle.Name`, its actually `c.Name`).(refer [Effective Go](https://go.dev/doc/effective_go#embedding) for the terminology.)
+5. Not just structs, but any types can be embedded into other types.
+  ```go
+  type MainInt{
+    int64
+    .....
+  }
+  ```
+6. As you can see in the above example, same method is defined for the embedded and embedding structures, but if an object is an instance of the embedding structure, then its `getName()` is used, else the embedded's `getName()` is used. This is called **redefining methods of embedded type**.
+7. A pointer to a struct can also be embedded(`CarWithPointer`), and an object of type embedding struct will still have access to all promoted properties and methods.
+8. Read the sort example for string slice in main.go
+9. for reverse sorting a slice, the `reverse` struct defined in package `sort` is used, which itself has the declaration
+  ```go
+  type reverse struct{
+    Interface
+  }
+  func (r reverse)Less(int i, j) bool{
+    return r.Interface.Less(j, i)
+  }
+  ```
+  wherein `Interface` is an interface having the methods `Len` and `Swap` defined(Swap is used to swap two values at indices i,j). It redefines the Less method by using the Less method of its embedding type(Interface). \
+  sort.Reverse is then used to return a reverse sorted slice. The following notation is similar to `Car{Vehicle{Name: "something", Type: "someType"}}`
+  ```go
+  // Reverse returns the reverse order for data.
+  func Reverse(data Interface) Interface {
+    return &reverse{data}
+  }
+  ```
 
 
 
