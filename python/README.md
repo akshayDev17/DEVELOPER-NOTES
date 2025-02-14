@@ -12,3 +12,11 @@
 
 1. copy contents of an object into a completely new variable, i.e. new memory location, rather can creating a variable solely for the purpose of pointing it to the originally instantiated object-address-location.
 2. this happens through [serialization]().
+
+# why do we write `__name__=='__main__'`?
+- Every Python script/module has a special built-in variable called`__name__`.
+    - If the script is being run directly, `__name__` is set to `"__main__"`.
+    - If the script is being imported as a module, `__name__` is set to the module's name (i.e., the filename without `.py`).
+- we check this so as to prevent any/all global code in the script when it is imported as a module
+    - check the `example-__name__` directory files for explanation
+- 
