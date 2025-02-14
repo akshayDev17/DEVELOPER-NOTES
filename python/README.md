@@ -20,3 +20,7 @@
 - we check this so as to prevent any/all global code in the script when it is imported as a module
     - check the `example-__name__` directory files for explanation
 - 
+
+# Private variables in python
+- convention: `__var_`
+- checkout the `private_var_eg.py` example
