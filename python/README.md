@@ -24,3 +24,7 @@
 # Private variables in python
 - convention: `__var_`
 - checkout the `private_var_eg.py` example
+
+# Heap using `heapq`
+- by default, `heapq.heapify` creates a min-heap out of a given list
+- to implement a max-heap, refer to the [`max_heap_example.py`](max_heap_example.py)
