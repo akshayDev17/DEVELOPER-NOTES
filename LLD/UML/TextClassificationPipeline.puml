@@ -1,0 +1,91 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+interface Tokenizer {
+    +List<String> tokenize(Document)
+}
+
+class WhitespaceTokenizer {
+    +List<String> tokenize(Document)
+}
+Tokenizer <|.. WhitespaceTokenizer
+
+interface FeatureExtractor {
+    +Vector extractFeatures(Document)
+}
+
+class TfIdfExtractor {
+    +Vector extractFeatures(Document)
+}
+FeatureExtractor <|.. TfIdfExtractor
+
+interface Classifier {
+    +void train(List<Document>, FeatureExtractor)
+    +String predict(Document, FeatureExtractor)
+}
+class SVMClassifier {
+    -svmModel
+    +void train(List<Document>, FeatureExtractor)
+    +String predict(Document, FeatureExtractor)
+}
+Classifier <|.. SVMClassifier
+
+class Document {
+    -text: String
+    -tokens: List<String>
+    -label: String
+    +getText(): String
+    +getTokens(): List<String>
+    +setTokens(List<String>)
+    +getLabel(): String
+}
+
+class TrainingDataset {
+    -allDocs: List<Document>
+    +getTrainSplit(): List<Document>
+    +getTestSplit(): List<Document>
+}
+
+interface Metric {
+    +double compute(List<String> trueLabels, List<String> predictedLabels)
+}
+class Accuracy {
+    +double compute(List<String>, List<String>)
+}
+Metric <|.. Accuracy
+
+class PipelineConfig {
+    -tokenizer: Tokenizer
+    -featureExtractor: FeatureExtractor
+    -classifier: Classifier
+    -metrics: List<Metric>
+    +getTokenizer(): Tokenizer
+    +getFeatureExtractor(): FeatureExtractor
+    +getClassifier(): Classifier
+    +getMetrics(): List<Metric>
+}
+
+class TextClassificationPipeline {
+    -tokenizer: Tokenizer
+    -featureExtractor: FeatureExtractor
+    -classifier: Classifier
+    -metrics: List<Metric>
+    +TextClassificationPipeline(PipelineConfig)
+    +train(dataset: TrainingDataset)
+    +evaluate(dataset: TrainingDataset): Map<String, Double>
+    +predict(doc: Document): String
+}
+
+Document --> Tokenizer : uses
+Document --> FeatureExtractor : uses
+TextClassificationPipeline --> Tokenizer
+TextClassificationPipeline --> FeatureExtractor
+TextClassificationPipeline --> Classifier
+TextClassificationPipeline --> Metric
+TrainingDataset --> Document : contains
+PipelineConfig --> Tokenizer
+PipelineConfig --> FeatureExtractor
+PipelineConfig --> Classifier
+PipelineConfig --> Metric
+
+@enduml
